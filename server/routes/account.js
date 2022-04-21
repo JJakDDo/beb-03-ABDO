@@ -1,9 +1,9 @@
-import express from 'express';
+import express from "express";
 
-import {createAccount} from '../controllers/account.js';
+import { createAccount } from "../controllers/account.js";
 
 const router = express.Router();
 
-rotuer.post('/', createAccount);
+router.post("/", createAccount);
 
 export default router;
