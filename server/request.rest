@@ -1,0 +1,34 @@
+### 글 작성하기
+POST http://localhost:4000/writing
+Content-Type: application/json
+
+{
+  "title": "Hello",
+  "content": "Hello World",
+  "nickname": "unknown2"
+}
+
+### 글 ID로 조회하기
+GET http://localhost:4000/writing/62610c9b4032665a9a8e17f1
+
+### 모든 글 가져오기
+GET http://localhost:4000/writing
+
+### 좋아요 달기
+POST http://localhost:4000/writing/like
+Content-Type: application/json
+
+{
+  "writingId": "62610c9b4032665a9a8e17f1",
+  "userId": "unknown"
+}
+
+### 댓글달기
+POST http://localhost:4000/writing/comment
+Content-Type: application/json
+
+{
+  "writingId": "62610c9b4032665a9a8e17f1",
+  "userId": "unknown",
+  "comment": "Goooooood"
+}
