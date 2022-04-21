@@ -3,12 +3,15 @@ import {Link} from 'react-router-dom';
 import styled from 'styled-components';
 
 const NavBar = styled.div`
+    /* position:fixed ;
+    top: 0; */
     display: flex;
     flex-wrap:nowrap;
     flex-direction: row;
     background-color: white;
+    width: 100%;
     height: 100px;
-    box-shadow: 0px 0px 12px rgb(225,208,205);
+    box-shadow: 0px 0px 12px rgb(225,208,205,0.5);
 `
 
 const NavIconBox = styled.div`
