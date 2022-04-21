@@ -10,7 +10,10 @@ const accountSchema = mongoose.Schema({
 	type: Number,
 	default: 0
   },
-  nft: [mongoose.ObjectId]
+  nft: {
+	type: [mongoose.ObjectId],
+	default: []
+  }
 });
 
 const Account = mongoose.model('Account', accountSchema);
