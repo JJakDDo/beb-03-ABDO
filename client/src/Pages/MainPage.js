@@ -23,40 +23,28 @@ const CommentWrapper = styled.div`
     align-items: center;
     
 `
-// 댓글 관련 영역
-const CommentArea = ()=>{
-
-    return (
-        <div>
-            <CommentWrapper>
-                <CommentInputBox></CommentInputBox>
-                <CommentCardBox></CommentCardBox>
-            </CommentWrapper>
-        </div>
-    )
-}
-
-// 모든 컴포넌트 모음
-const WritingViewArea = ()=>{
-
-    return (
-        <div>
-            <WritingCardWrapper>
-                <WritingCard></WritingCard>
-                <CommentArea></CommentArea>
-            </WritingCardWrapper>
-        </div>
-    )
-}
-
 
 // 글이 보여지는 페이지
 const MainPage = ()=>{
 
+    let writingData = {
+        nickName:"못말",
+        userId:"helloWorld5523",
+        topic:"요즘",
+        text:"아무일 없는데 괜찮은데-이상하게 마음이 무겁다-설명할 수 없는 감정만-깊어지는 요즘"
+    }
+
     return(
         <div>
             <NAV />
-            <WritingViewArea></WritingViewArea>
+            <WritingCardWrapper>
+                <WritingCard nickName={writingData.nickName} userId={writingData.userId} topic={writingData.topic} text={writingData.text} />
+                
+                <CommentWrapper>
+                  <CommentInputBox></CommentInputBox>
+                  <CommentCardBox></CommentCardBox>
+                </CommentWrapper>
+            </WritingCardWrapper>
         </div>
     )
 }

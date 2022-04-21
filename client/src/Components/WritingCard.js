@@ -4,7 +4,7 @@ import styled from "styled-components";
 // 글쓴이 닉네임
 
 const WriterNickname = styled.div`
-    
+
     display:flex ;
     justify-content:center ;
     align-items:center ;
@@ -16,7 +16,7 @@ const WriterNickname = styled.div`
     font-weight: 600;
 
     /* background-color: gray; */
-    
+
 `
 
 
@@ -32,7 +32,9 @@ const WriterId = styled.div`
 `
 const WriterProfileCard = styled.div`
     display: flex;
-
+    position:relative;
+    top:20px;
+    left:20px;
     width: 500px;
     height: 50px;
     /* background-color: white; */
@@ -40,7 +42,7 @@ const WriterProfileCard = styled.div`
 
 // 글쓴이 아이디 닉네임을 포함하는 카드
 const WriterProfileCardArea = styled.div`
-    
+
     left: 10px ;
     width: 100%;
     height: 50px;
@@ -68,11 +70,11 @@ const TopicArea = styled.div`
 const Text = styled.div`
     margin-top: 20px;
     margin-bottom:20px ;
-    
+
 
     justify-content:center ;
     align-items:center ;
-    
+
     font-size: 30px;
     text-align: center;
     /* background-color:white ; */
@@ -96,10 +98,10 @@ const WritingTextArea = styled.div`
 
 //좋아요 부분
 const LikeArea = styled.div`
-    
+
     display:flex ;
     justify-content: flex-end;
-    
+
     width:100% ;
     height: 50px;
 
@@ -115,7 +117,7 @@ const LikeIconArea = styled.div`
 
     width:200px ;
     height:100px ;
-        
+
     /* background-color: skyblue; */
 
 `
@@ -135,7 +137,7 @@ const LikeIcon = styled.img.attrs({
 
 // 좋아요 숫자
 const LikeValue = styled.div`
-   
+
     position:relative ;
     display:flex ;
 
@@ -170,29 +172,46 @@ height: 500px;
 
 
 
-const WritingCard = ()=>{
+const WritingCard = ({topic,nickName,userId,text})=>{
 
+    let textCopy = [...text];
+    let changedText;
+
+    // 글 띄어쓰기
+    if(textCopy!=undefined){
+        let textRow = '';
+        let textArr=[];
+
+        for(let i=0; i < textCopy.length ; i++){
+            if(text[i] =='-'){
+                if(textRow.length !==0){
+                    textArr.push(textRow);
+                    textRow =''
+                }
+            }
+            else{
+                textRow+=textCopy[i];
+            }
+        }
+        if(textRow.length > 0){textArr.push(textRow); textRow=''};
+        changedText=textArr;
+    }
+    
 
     return(
         <WritingCardArea>
             <WriterProfileCardArea>
                 <WriterProfileCard>
-                    <WriterNickname>나는앓아</WriterNickname>                    
-                    <WriterId>(z3129sj)</WriterId>
+                    <WriterNickname>{nickName || '무명'}</WriterNickname>
+                    <WriterId>[ {userId ||'없는아이디'} ]</WriterId>
                 </WriterProfileCard>
             </WriterProfileCardArea>
             <TopicArea>
-                <Topic>[ 아끼지마 ]</Topic>
+                <Topic>{topic || '무제'}</Topic>
             </TopicArea>
             <WritingTextArea>
                 <Text>
-                    행복은 아낄수록<br/>
-                    쌓이는게 아니라<br/>
-                    다 없어지더라<br/>
-                    <br/>
-                    하루하루<br/>
-                    지금당장 행복한게<br/>
-                    최고 중요한 것이야<br/>
+                    {changedText.map((row)=>{return <div style={{padding:"5px"}}>{row}</div>}) || '내용없음'}
                 </Text>
             </WritingTextArea>
             <LikeArea>
