@@ -1,4 +1,4 @@
-import express from 'express';
+import express from "express";
 
 import {createAccount, getAccount, login} from '../controllers/account.js';
 
