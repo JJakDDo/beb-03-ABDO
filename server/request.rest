@@ -20,7 +20,7 @@ Content-Type: application/json
 
 {
   "writingId": "62610c9b4032665a9a8e17f1",
-  "userId": "unknown"
+  "userId": "unknown3"
 }
 
 ### 댓글달기
@@ -31,4 +31,13 @@ Content-Type: application/json
   "writingId": "62610c9b4032665a9a8e17f1",
   "userId": "unknown",
   "comment": "Goooooood"
+}
+
+### 컨트랙트 배포
+POST http://localhost:4000/deploy
+Content-Type: application/json
+
+{
+  "userId": "admin",
+  "password": "admin"
 }
