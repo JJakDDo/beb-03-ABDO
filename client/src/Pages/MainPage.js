@@ -8,7 +8,7 @@ import WritingCard from "../Components/WritingCard";
 
 
 const WritingCardWrapper = styled.div`
-    margin-top: 5%;
+    margin-top: 10%;
     display: flex;
     align-items: center;
     flex-direction: column;
