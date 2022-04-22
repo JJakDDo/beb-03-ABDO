@@ -62,7 +62,7 @@ export const deployContracts = () => {
         // const gasLimit = 'await web3.eth.estimateGas({
         //   bytecode,
         // });'
-        const gasLimit = "200000";
+        const gasLimit = "2000000";
 
         const txObject = {
           nonce: web3.utils.toHex(nonce),
