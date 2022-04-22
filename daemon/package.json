@@ -1,0 +1,23 @@
+{
+  "name": "daemon",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "type": "module",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+	"start": "pm2 start index.js --restart-delay=30000",
+	"stop": "pm2 delete index.js",
+	"flush": "pm2 flush"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "dotenv": "^16.0.0",
+    "express": "^4.17.3",
+    "mongodb": "^4.5.0",
+    "pm2": "^5.2.0",
+    "web3": "^1.7.3"
+  }
+}

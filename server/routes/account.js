@@ -1,6 +1,6 @@
 import express from "express";
 
-import {createAccount, getAccount, login} from '../controllers/account.js';
+import {createAccount, getAccount, login, getBalance} from '../controllers/account.js';
 
 const router = express.Router();
 
@@ -12,5 +12,7 @@ router.post('/', createAccount);
 
 // Log in
 router.post('/login', login);
+
+router.get('/balance/:address', getBalance);
 
 export default router;
