@@ -44,7 +44,7 @@ const NavIcon = ({url,iconName})=>{
         case "account" : {iconSrc+="ICO_Account.png";break}
         default : {iconSrc+="ICO_IconDumy5050.png";break}
     }
-    console.log(iconSrc);
+    // console.log(iconSrc);
 
     return(
         <Link to={url} style={{textDecoration:"none"}}>
