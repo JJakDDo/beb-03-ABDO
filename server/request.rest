@@ -1,11 +1,11 @@
 ### 글 작성하기
 POST http://localhost:4000/writing
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiJ1bmtub3duIiwibmlja25hbWUiOiJ1bmtub3duIiwiaWF0IjoxNjUwNjAzMzkxfQ.9CHlmguz5G0BImztDuSN2aUW1Qhl0A3MkyOYRfP8SgQ
 Content-Type: application/json
 
 {
-  "title": "Hello",
-  "content": "Hello World",
-  "nickname": "unknown2"
+  "title": "Token",
+  "content": "JWT test"
 }
 
 ### 글 ID로 조회하기
@@ -16,20 +16,20 @@ GET http://localhost:4000/writing
 
 ### 좋아요 달기
 POST http://localhost:4000/writing/like
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiJ1bmtub3duIiwibmlja25hbWUiOiJ1bmtub3duIiwiaWF0IjoxNjUwNjAzMzkxfQ.9CHlmguz5G0BImztDuSN2aUW1Qhl0A3MkyOYRfP8SgQ
 Content-Type: application/json
 
 {
-  "writingId": "62610c9b4032665a9a8e17f1",
-  "userId": "unknown3"
+  "writingId": "62610c9b4032665a9a8e17f1"
 }
 
 ### 댓글달기
 POST http://localhost:4000/writing/comment
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiJ1bmtub3duIiwibmlja25hbWUiOiJ1bmtub3duIiwiaWF0IjoxNjUwNjAzMzkxfQ.9CHlmguz5G0BImztDuSN2aUW1Qhl0A3MkyOYRfP8SgQ
 Content-Type: application/json
 
 {
   "writingId": "62610c9b4032665a9a8e17f1",
-  "userId": "unknown",
   "comment": "Goooooood"
 }
 
@@ -40,4 +40,13 @@ Content-Type: application/json
 {
   "userId": "admin",
   "password": "admin"
+}
+
+### 로그인
+POST http://localhost:4000/account/login
+Content-Type: application/json
+
+{
+  "userId": "unknown",
+  "password": "unknown"
 }

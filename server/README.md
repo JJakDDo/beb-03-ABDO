@@ -84,13 +84,19 @@
 
 `POST http://localhost:4000/writing`
 
+### Required Headers
+
+```
+Authorization: Bearer [Access Token]
+Content-Type: application/json
+```
+
 ### Required Body
 
 ```
 {
   "title": "Writing's Title",
-  "content": "Writing's Content",
-  "nickname": "Writer's Nickname"
+  "content": "Writing's Content"
 }
 ```
 
@@ -189,12 +195,18 @@
 
 `POST http://localhost:4000/writing/like`
 
+### Required Headers
+
+```
+Authorization: Bearer [Access Token]
+Content-Type: application/json
+```
+
 ### Required Body
 
 ```
 {
-  "writingId": "Writing's Object ID",
-  "userId": "User ID"
+  "writingId": "Writing's Object ID"
 }
 ```
 
@@ -217,13 +229,48 @@
 
 `POST http://localhost:4000/writing/comment`
 
+### Required Headers
+
+```
+Authorization: Bearer [Access Token]
+Content-Type: application/json
+```
+
 ### Required Body
 
 ```
 {
   "writingId": "Writing's Object ID",
-  "userId": "Commenter's ID",
   "comment": "Comment"
+}
+```
+
+### Response
+
+```
+{
+  "status": "success"
+}
+```
+
+## Deploy Contract
+
+### Request
+
+`POST http://localhost:4000/deploy`
+
+### Required Headers
+
+```
+Content-Type: application/json
+```
+
+### Required Body
+
+```
+{
+  "userId": "Admin's ID",
+  "password": "Admin's Password"
 }
 ```
 

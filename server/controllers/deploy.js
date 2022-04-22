@@ -25,10 +25,7 @@ export const deploy = async (req, res) => {
   }
 
   try {
-    // db에 저장
     await deployContracts();
-
-    // 저장 후 토큰 지급
 
     res.status(201).json({ status: "success" });
   } catch (err) {
