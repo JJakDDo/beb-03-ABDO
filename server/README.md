@@ -1,12 +1,12 @@
-# API Document #
+# API Document
 
-## Create Account ##
+## Create Account
 
-### Request ###
+### Request
 
 `POST http://127.0.0.1:4000/account`
 
-### Required Body ###
+### Required Body
 
 ```
 {
@@ -16,7 +16,7 @@
 }
 ```
 
-### Response ###
+### Response
 
 ```
 {
@@ -32,13 +32,13 @@
 }
 ```
 
-## Get Account ##
+## Get Account
 
-### Request ###
+### Request
 
 `GET http://127.0.0.1:4000/account/:userId`
 
-### Response ###
+### Response
 
 ```
 {
@@ -54,13 +54,13 @@
 }
 ```
 
-## Login ##
+## Login
 
-### Request ###
+### Request
 
 `POST http://127.0.0.1:4000/account/login`
 
-### Required Body ###
+### Required Body
 
 ```
 {
@@ -69,11 +69,168 @@
 }
 ```
 
-### Response ###
+### Response
 
 ```
 {
   "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiJyb2JpbjEiLCJuaWNrbmFtZSI6InJjIiwiaWF0IjoxNjUwNTE4NjUyfQ.am4JrhaKPJ_KyiA9EcdazNHnItJ-qgGFmt0ydDSjMck",
     "userId": "USER'S ID"
+}
+```
+
+## Post Writing
+
+### Request
+
+`POST http://localhost:4000/writing`
+
+### Required Body
+
+```
+{
+  "title": "Writing's Title",
+  "content": "Writing's Content",
+  "nickname": "Writer's Nickname"
+}
+```
+
+### Response
+
+```
+{
+  "status": "success or fail",
+  "data": {
+    "writingId": "Writing's Object ID"
+  }
+}
+```
+
+## Get All Writings
+
+### Request
+
+`GET http://localhost:4000/writing`
+
+### Required Body
+
+```
+
+```
+
+### Response
+
+```
+{
+  "status": "success or fail",
+  "data": [
+    {
+      "id": "Writing's Object ID",
+      "title": "Writing's Title",
+      "content": "Writing's Content",
+      "writer": "Writer's ID",
+      "nickname": "Writer's Nickname",
+      "comments": [
+        {
+          "userId": "Commenter's ID",
+          "nickname": "Commenter's Nickname",
+          "comment": "Comments"
+        }
+      ],
+      "likes": [
+        "Liker's ID"
+      ],
+      "createdAt": "2022-04-21T05:22:05.709Z"
+    }
+  ]
+}
+```
+
+## Get Writings By ID
+
+### Request
+
+`GET http://localhost:4000/writing/[:Writing's Object ID]`
+
+### Required Body
+
+```
+
+```
+
+### Response
+
+```
+{
+  "status": "success or fail",
+  "data": {
+    "id": "Writing's Object ID",
+    "title": "Writing's Title",
+    "content": "Writing's Content",
+    "writer": "Writer's ID",
+    "nickname": "Writer's Nickname",
+    "comments": [
+      {
+        "userId": "Commenter's ID",
+        "nickname": "Commenter's Nickname",
+        "comment": "Comments"
+      }
+    ],
+    "likes": [
+      "Liker's ID"
+    ],
+    "createdAt": "2022-04-21T07:49:47.675Z"
+  }
+}
+```
+
+## Like
+
+### Request
+
+`POST http://localhost:4000/writing/like`
+
+### Required Body
+
+```
+{
+  "writingId": "Writing's Object ID",
+  "userId": "User ID"
+}
+```
+
+### Response
+
+```
+{
+  "status": "success"
+}
+
+{
+  "status": "fail",
+  "message": "Cannot send like again"
+}
+```
+
+## Comment
+
+### Request
+
+`POST http://localhost:4000/writing/comment`
+
+### Required Body
+
+```
+{
+  "writingId": "Writing's Object ID",
+  "userId": "Commenter's ID",
+  "comment": "Comment"
+}
+```
+
+### Response
+
+```
+{
+  "status": "success"
 }
 ```
