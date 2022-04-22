@@ -7,13 +7,15 @@ import {
   commentToWriting,
 } from "../controllers/writing.js";
 
+import { authenticateToken } from "../middlewares/authenticateToken.js";
+
 const router = express.Router();
 
-router.post("/", postWriting);
+router.post("/", authenticateToken, postWriting);
 
-router.post("/like", addLikeToWriting);
+router.post("/like", authenticateToken, addLikeToWriting);
 
-router.post("/comment", commentToWriting);
+router.post("/comment", authenticateToken, commentToWriting);
 
 router.get("/:id", getWritingById);
 
