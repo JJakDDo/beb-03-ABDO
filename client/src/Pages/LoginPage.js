@@ -3,16 +3,23 @@ import {Link} from "react-router-dom";
 import styled from "styled-components";
 
 import NAV from "../Components/NAV"
+import LoginCard from "../Components/LoginCard"
 
-const AreaIndex = styled.div`
-    color:rgb(225, 208, 205);
-    font-weight: 500;
-    font-size: 55px;
+
+// 유저 등록 카드 컴포넌트의 축이되는 컴포넌트
+const LoginCardPivot = styled.div`
+    position:relative;
+    top:100px;
+
+    display:flex ;
+    justify-content: center;
+
+    padding-top: 5%;
+    width:100% ;
+    height: 1px;
+    
 `
-const BtnSignup = styled.button`
-    width: 200px;
-    height: 100px;
-`
+
 
 
 // 로그인시 페이지
@@ -21,10 +28,11 @@ const LoginPage = ()=>{
     return(
         <div>
             <NAV/>
-            <AreaIndex>
-                this Area is LoginPage
-            </AreaIndex>
-            <Link to="/signup"><BtnSignup>가입하기</BtnSignup></Link>
+            <LoginCardPivot>
+                <LoginCard>
+
+                </LoginCard>
+            </LoginCardPivot>
         </div>
     )
 }
