@@ -18,23 +18,6 @@ const SignupCardPivot = styled.div`
     background-color: rgb(155,155,155,0.5);
 `
 
-
-// 유저의 정보 관련 컴포넌트를 모두 포함하는 컴포넌트
-const SignupCardArea = styled.div`
-display: flex;
-flex-direction:column ;
-justify-content: space-between;
-align-items:center ;
-
-
-box-shadow: 0px 0px 14px rgb(225,208,205) ;
-margin-top: 5%;
-width: 40vw;
-height: 700px;
-
-/* background-color: white; */
-`
-
 // 회원가입을 할수 있는 페이지
 const SignupPage = ()=>{
 
@@ -42,11 +25,9 @@ const SignupPage = ()=>{
         <div>
             <NAV/>
             <SignupCardPivot>
-                <SignupCardArea>
-                    <div/><div/>
-                        <SignupCard/>
-                    <div/><div/>
-                </SignupCardArea>
+                <SignupCard>
+
+                </SignupCard>
             </SignupCardPivot>
             
         </div>

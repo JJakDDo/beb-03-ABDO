@@ -60,6 +60,25 @@ const ErrorCard = styled.div`
     color:rgb(245, 76, 60) ;
     height: 30px;
 `
+// 유저의 정보 관련 컴포넌트를 모두 포함하는 컴포넌트
+const SignupCardArea = styled.div`
+    display: flex;
+    flex-direction:column ;
+    justify-content: space-between;
+    align-items:center ;
+
+
+    box-shadow: 0px 0px 14px rgb(225,208,205) ;
+    margin-top: 5%;
+    width: 40vw;
+    height: 700px;
+
+    /* background-color: white; */
+`
+// 빈 공간을 표시하는 컴포넌트. flex 내 컴포넌트를 보기좋게 모으기 위해 사용합니다.
+const Spacer = styled.div`
+    height: 30px;
+`
 
 // 유저의 입력정보를 바탕으로 회원가입 요청하는 컴포넌트
 const SignupCard = ()=>{
@@ -167,7 +186,8 @@ const SignupCard = ()=>{
     }
 
     return (
-        <>
+        <SignupCardArea>
+            <Spacer/>
             <ErrorCard>{errMessage}</ErrorCard>
             <DataFieldName>아이디</DataFieldName>
             <InputSignupDataCard placeholder="아이디 를 입력해주세요..." onInput={limiterUserIdInput} value={userId}/>
@@ -179,7 +199,8 @@ const SignupCard = ()=>{
             <InputSignupDataCard placeholder="닉네임 를 입력해주세요..." onInput={limiterNicknameInput} value={userNickname}/>
             <div/>
             <BtnSignupRequest onClick={requestUserSignup}>계정생성</BtnSignupRequest>
-        </>
+            <Spacer/>
+        </SignupCardArea>
     )
 }
 
