@@ -69,7 +69,6 @@ const SignupCardArea = styled.div`
 
 
     box-shadow: 0px 0px 14px rgb(225,208,205) ;
-    margin-top: 5%;
     width: 40vw;
     height: 700px;
 

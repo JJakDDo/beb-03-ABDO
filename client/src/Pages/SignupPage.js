@@ -13,9 +13,10 @@ const SignupCardPivot = styled.div`
     display:flex ;
     justify-content: center;
 
+    padding-top: 5%;
     width:100% ;
     height: 1px;
-    background-color: rgb(155,155,155,0.5);
+    /* background-color: rgb(155,155,155,0.5); */
 `
 
 // 회원가입을 할수 있는 페이지
