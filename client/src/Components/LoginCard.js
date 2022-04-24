@@ -1,7 +1,7 @@
 import React,{ useState } from "react";
 import { Link } from "react-router-dom";
 import styled from "styled-components";
-
+import axios from "axios";
 
 // 어떤 데이터를 입력하도록 할것인지 필드명을 알립니다.
 const DataFieldName = styled.div`
@@ -158,7 +158,19 @@ const LoginCard = ()=>{
         else{
             // 정상적인 값
             setErrMessage('');
-            alert(JSON.stringify({userId,userPw}));
+            //alert(JSON.stringify({userId,userPw}));
+
+            axios.post('http://127.0.0.1:4000/account/login',{
+                userId:userId,
+                password:userPw
+            })
+            .then((res)=>{
+                alert(`유저 '${res.data.userId}' 로그인 되었습니다. token : ${res.data.token}`);
+            })
+            .catch((err)=>{
+                alert(`로그인 실패하였습니다.${err}`);
+            })
+            
         }
     }
 
@@ -170,7 +182,7 @@ const LoginCard = ()=>{
             <DataFieldName>아이디</DataFieldName>
             <InputLoginData placeholder="아이디 를 입력해주세요..." onInput={limiterUserIdInput} value={userId}/>
             <DataFieldName>비밀번호</DataFieldName>
-            <InputLoginData placeholder="비밀번호 를 입력해주세요..."  onInput={limiterPwInput} value={userPw}/>
+            <InputLoginData placeholder="비밀번호 를 입력해주세요..."  onInput={limiterPwInput} value={userPw} type="password"/>
             <div/>
             <BtnArea>
                 <BtnRequest onClick={requestUserLogin}>로그인</BtnRequest>
