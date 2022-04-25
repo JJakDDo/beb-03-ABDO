@@ -3,6 +3,7 @@ import styled from "styled-components";
 
 import NAV from "../Components/NAV"
 import ProfileCard from "../Components/ProfieCard";
+import AccountMenuMar from "./AccountMenuBar";
 
 
 const AreaIndex = styled.div`
@@ -14,9 +15,11 @@ const AreaIndex = styled.div`
 // 프로필 배너의 위치가 변하더라도 기준이 되는 Pivot 을 정해줄 컴포넌트
 const ProfileBannerAreaPivot = styled.div`
     position: relative;
-    top: 100px; 
-
+    top: 120px; 
+    
     width: 100%;
+
+    user-select:none;
     
     /* background-color: blue; */
 `
@@ -30,7 +33,7 @@ const ProfileBannerArea = styled.div`
     display:flex ;
     justify-content: center;
     
-    background-color: red;
+    /* background-color: rgb(255,0,0,0.5); */
 
 `
 
@@ -50,7 +53,7 @@ const AccountPage = ()=>{
                     <ProfileCard/>
                 </ProfileBannerArea>
             </ProfileBannerAreaPivot>
-
+            <AccountMenuMar></AccountMenuMar>
             
         </div>
     )

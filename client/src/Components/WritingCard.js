@@ -211,7 +211,7 @@ const WritingCard = ({topic,nickName,userId,text})=>{
             </TopicArea>
             <WritingTextArea>
                 <Text>
-                    {changedText.map((row)=>{return <div style={{padding:"5px"}}>{row}</div>}) || '내용없음'}
+                    {changedText.map((row,idx)=>{return <div  key={`row${idx}`} style={{padding:"5px"}}>{row}</div>}) || '내용없음'}
                 </Text>
             </WritingTextArea>
             <LikeArea>
