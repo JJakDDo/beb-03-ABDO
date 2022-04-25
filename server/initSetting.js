@@ -59,10 +59,22 @@ export const deployContracts = () => {
         */
         const nonce = await web3.eth.getTransactionCount(data.address);
         const gasPrice = await web3.eth.getGasPrice();
-        // const gasLimit = 'await web3.eth.estimateGas({
-        //   bytecode,
-        // });'
-        const gasLimit = "200000";
+        // const gasLimit = await web3.eth.estimateGas({
+        //   bytecode: `0x${bytecode}`,
+        // });
+
+        // 컨트랙트 배포할 때 필요한 가스량 알아내는 방법
+        let contract = new web3.eth.Contract(abi);
+        const bytecodeWithEncodedParameters = contract
+          .deploy({
+            data: bytecode,
+          })
+          .encodeABI();
+
+        const gasLimit = await web3.eth.estimateGas({
+          data: bytecodeWithEncodedParameters,
+        });
+        //const gasLimit = "2000000";
 
         const txObject = {
           nonce: web3.utils.toHex(nonce),
