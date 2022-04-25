@@ -2,6 +2,7 @@ import React,{ useState } from "react";
 import { Link } from "react-router-dom";
 import styled from "styled-components";
 import axios from "axios";
+import sha256 from 'sha256';
 
 import userStateActions from "../store/userStateActions";
 import { useSelector,userDispatcher, useDispatch } from "react-redux";
@@ -172,7 +173,7 @@ const LoginCard = ()=>{
 
             axios.post('http://127.0.0.1:4000/account/login',{
                 userId:userId,
-                password:userPw
+                password:sha256(userId+userPw+process.env.REACT_APP_CLIENTKEY)
             })
             .then((res)=>{
                 //alert(`유저 '${res.data.userId}' 로그인 되었습니다. token : ${res.data.token}`);

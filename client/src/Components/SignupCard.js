@@ -2,6 +2,7 @@ import React from "react";
 import styled from "styled-components";
 import { useState } from "react";
 import axios from 'axios';
+import sha256 from 'sha256';
 
 // 어떤 데이터를 입력하도록 할것인지 필드명을 알립니다.
 const DataFieldName = styled.div`
@@ -232,7 +233,7 @@ const SignupCard = ()=>{
                 // 계정 생성하는 임시 코드
                 axios.post('http://127.0.0.1:4000/account',{
                     userId:userId,
-                    password:userPw, // 나중에 SHA256 암호화 필요. frontend 에서의 모듈설치에러 문제로 아직 해결하지 못함
+                    password:sha256(userId+userPw+process.env.REACT_APP_CLIENTKEY), // 암호화 하여 DB 에 저장
                     nickname:userNickname
                 })
                 .then((res2)=>{
