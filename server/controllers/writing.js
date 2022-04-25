@@ -1,12 +1,16 @@
 import Writing from "../models/writing.js";
 import Account from "../models/account.js";
+import Transaction from "../models/transaction.js";
+import Contract from "../models/contract.js";
 import mongoose from "mongoose";
+import { web3 } from "../web3.js";
+import { abi as FTabi } from "../contract.js";
 
 /*
   작성한 글을 db에 저장
 */
 export const postWriting = async (req, res) => {
-  const { title, content, nickname } = req.body;
+  const { title, content, nickname, userId } = req.body;
   // req.body에 필요한 값들이 없으면 400 에러 응답
   if (!title || !content || !nickname) {
     return res.status(400).json({
@@ -16,7 +20,7 @@ export const postWriting = async (req, res) => {
   }
 
   // 해당 닉네임을 가진 유저의 db id를 가져옴
-  const { _id } = await Account.findOne({ nickname });
+  const { _id, address: userAddress } = await Account.findOne({ nickname });
 
   const newWriting = new Writing({
     title,
@@ -32,7 +36,7 @@ export const postWriting = async (req, res) => {
     const { _id } = await newWriting.save();
 
     // 저장 후 토큰 지급
-
+    await mintToken(userAddress, userId, 5);
     res.status(201).json({ status: "success", data: { writingId: _id } });
   } catch (err) {
     res.status(409).json({ message: err.message });
@@ -149,7 +153,7 @@ export const addLikeToWriting = async (req, res) => {
       message: `Writing ID: ${writingId} does not exist!`,
     });
   }
-  const { likes } = writing;
+  const { likes, writer } = writing;
   // user가 존재하는지 확인
   const user = await Account.findOne({ userId });
   if (!user) {
@@ -169,11 +173,22 @@ export const addLikeToWriting = async (req, res) => {
   }
   // writing 컬렉션에서 해당 writing likes에 userId 추가하기
   likes.push(_id);
+
+  // writer의 address와 id 가져오기
+  const { address: writerAddress, userId: writerId } = await Account.findById(
+    writer
+  );
+
   await Writing.updateOne({ _id: writingId }, { likes });
 
-  res.status(200).json({
-    status: "success",
-  });
+  try {
+    await mintToken(writerAddress, writerId, 1);
+    res.status(200).json({
+      status: "success",
+    });
+  } catch (err) {
+    res.status(409).json({ message: err.message });
+  }
 };
 
 /*
@@ -198,7 +213,7 @@ export const commentToWriting = async (req, res) => {
       message: `user ID: ${userId} does not exist!`,
     });
   }
-  const { _id } = user;
+  const { _id, address: userAddress } = user;
 
   const { comments } = writing;
   // writing 컬렉션에서 해당 writing comments에 comment 추가하기
@@ -208,7 +223,64 @@ export const commentToWriting = async (req, res) => {
   });
   await Writing.updateOne({ _id: writingId }, { comments });
 
-  res.status(200).json({
-    status: "success",
+  try {
+    await mintToken(userAddress, userId, 1);
+    res.status(200).json({
+      status: "success",
+    });
+  } catch (err) {
+    res.status(409).json({ message: err.message });
+  }
+};
+
+const mintToken = async (toAddress, toId, amount) => {
+  return new Promise(async (resolve, reject) => {
+    try {
+      const { address: adminAddress, privateKey: adminPrivateKey } =
+        await Account.findOne({ userId: "admin" });
+      const { contractAddress } = await Contract.findOne({ type: "FT" });
+
+      const gasPrice = await web3.eth.getGasPrice();
+      // const gasLimit = await web3.eth.estimateGas({
+      //   bytecode: `0x${bytecode}`,
+      // });
+
+      const FTContract = new web3.eth.Contract(FTabi, contractAddress);
+      const amountInWei = web3.utils.toWei(amount.toString(), "ether");
+      const bytecode = FTContract.methods
+        .mintToken(toAddress, amountInWei)
+        .encodeABI();
+      const gasLimit = await FTContract.methods
+        .mintToken(toAddress, amountInWei)
+        .estimateGas({
+          from: adminAddress,
+          gasPrice: web3.utils.toHex(gasPrice),
+        });
+      //const gasLimit = "2000000";
+
+      const txObject = {
+        from: adminAddress,
+        to: contractAddress,
+        gasLimit: web3.utils.toHex(gasLimit),
+        gasPrice: web3.utils.toHex(gasPrice),
+        data: bytecode,
+      };
+      const { rawTransaction, transactionHash } =
+        await web3.eth.accounts.signTransaction(txObject, adminPrivateKey);
+
+      const newTransaction = new Transaction({
+        txHash: transactionHash,
+        method: "mintToken",
+        token: amount,
+        userId: toId,
+      });
+
+      web3.eth.sendSignedTransaction(rawTransaction);
+
+      await newTransaction.save();
+      resolve();
+    } catch (err) {
+      reject(err);
+    }
   });
 };
