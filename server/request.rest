@@ -4,8 +4,8 @@ Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiJUZXN0S
 Content-Type: application/json
 
 {
-  "title": "Newbie2",
-  "content": "YesYesYes222222"
+  "title": "Newbie3",
+  "content": "YesYesYes22333332"
 }
 
 ### 글 ID로 조회하기
@@ -20,7 +20,7 @@ Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiJ1bmtub
 Content-Type: application/json
 
 {
-  "writingId": "6265f0c7281a1efb3f9ccbf1"
+  "writingId": "6265f5b641bcab0bee62fe70"
 }
 
 ### 댓글달기
@@ -29,8 +29,8 @@ Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiJ1bmtub
 Content-Type: application/json
 
 {
-  "writingId": "6265ea5e30ce0b88fe11783f",
-  "comment": "Goooooood"
+  "writingId": "6265f5b641bcab0bee62fe70",
+  "comment": "Goooo2222d"
 }
 
 ### 컨트랙트 배포

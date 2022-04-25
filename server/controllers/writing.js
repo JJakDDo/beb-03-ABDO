@@ -4,7 +4,7 @@ import Transaction from "../models/transaction.js";
 import Contract from "../models/contract.js";
 import mongoose from "mongoose";
 import { web3 } from "../web3.js";
-import { bytecode, abi as FTabi } from "../contract.js";
+import { abi as FTabi } from "../contract.js";
 
 /*
   작성한 글을 db에 저장
@@ -245,14 +245,13 @@ const mintToken = async (toAddress, toId, amount) => {
       //   bytecode: `0x${bytecode}`,
       // });
 
-      // 컨트랙트 배포할 때 필요한 가스량 알아내는 방법
       const FTContract = new web3.eth.Contract(FTabi, contractAddress);
-      const amounInWei = web3.utils.toWei(amount.toString(), "ether");
-      const bytecodeEncoded = FTContract.methods
-        .mintToken(toAddress, amounInWei)
+      const amountInWei = web3.utils.toWei(amount.toString(), "ether");
+      const bytecode = FTContract.methods
+        .mintToken(toAddress, amountInWei)
         .encodeABI();
       const gasLimit = await FTContract.methods
-        .mintToken(toAddress, amounInWei)
+        .mintToken(toAddress, amountInWei)
         .estimateGas({
           from: adminAddress,
           gasPrice: web3.utils.toHex(gasPrice),
@@ -264,7 +263,7 @@ const mintToken = async (toAddress, toId, amount) => {
         to: contractAddress,
         gasLimit: web3.utils.toHex(gasLimit),
         gasPrice: web3.utils.toHex(gasPrice),
-        data: bytecodeEncoded,
+        data: bytecode,
       };
       const { rawTransaction, transactionHash } =
         await web3.eth.accounts.signTransaction(txObject, adminPrivateKey);
