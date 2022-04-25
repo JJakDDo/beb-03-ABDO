@@ -119,7 +119,10 @@ const LoginCard = ()=>{
                             setErrMessage(`허용할 수 없는 문자 감지`);
                             return false;}
                 });
-                setUserId(sanitizedInput.reduce((a,c)=>a+c));
+
+                if(sanitizedInput.length>0){
+                    setUserId(sanitizedInput.reduce((a,c)=>a+c));
+                }
                 setErrMessage('');
             }
             
@@ -185,10 +188,10 @@ const LoginCard = ()=>{
             <InputLoginData placeholder="비밀번호 를 입력해주세요..."  onInput={limiterPwInput} value={userPw} type="password"/>
             <div/>
             <BtnArea>
-                <BtnRequest onClick={requestUserLogin}>로그인</BtnRequest>
                 <Link to="/signup">
                     <BtnRequest>가입하기</BtnRequest>
                 </Link>
+                <BtnRequest onClick={requestUserLogin}>로그인</BtnRequest>
             </BtnArea>
             <Spacer/>
         </LoginCardArea>
