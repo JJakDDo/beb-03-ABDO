@@ -3,6 +3,9 @@ import { Link } from "react-router-dom";
 import styled from "styled-components";
 import axios from "axios";
 
+import userStateActions from "../store/userStateActions";
+import { useSelector,userDispatcher, useDispatch } from "react-redux";
+
 // 어떤 데이터를 입력하도록 할것인지 필드명을 알립니다.
 const DataFieldName = styled.div`
     font-size: 25px;
@@ -100,6 +103,10 @@ const LoginCard = ()=>{
 
     let [errMessage,setErrMessage] = useState('');
 
+    // 상태관리 관련 함수
+    const userState = useSelector(state=>state);
+    const dispatch = useDispatch(); // store에 전송하는 함수
+
     // 아이디 문자열 검사
     function limiterUserIdInput(e){
         let inputdata = [...e.target.value];
@@ -168,7 +175,9 @@ const LoginCard = ()=>{
                 password:userPw
             })
             .then((res)=>{
-                alert(`유저 '${res.data.userId}' 로그인 되었습니다. token : ${res.data.token}`);
+                //alert(`유저 '${res.data.userId}' 로그인 되었습니다. token : ${res.data.token}`);
+                dispatch(userStateActions.login(res.data.userId,res.data.nickname,res.data.token,0));
+                alert(`reduxStore :: userState:{userId:${userState.userId}, userToken:${userState.authorizedToken}}`);
             })
             .catch((err)=>{
                 alert(`로그인 실패하였습니다.${err}`);
