@@ -1,12 +1,21 @@
+// Import models
 import Account from '../models/account.js';
 import Contract from '../models/contract.js';
 import Transaction from '../models/transaction.js';
+
+// Import packages
 import mongoose from 'mongoose';
 import Web3 from 'web3';
 import jwt from 'jsonwebtoken';
+import dotenv from 'dotenv';
+
+// Import ABI from contract.js
 import {abi} from '../contract.js';
 
-const web3 = new Web3('http://127.0.0.1:7545');
+// Import web3 from web3.js
+import {web3} from '../web3.js';
+
+dotenv.config();
 
 // Create Account
 export const createAccount = async (req, res) => {
@@ -16,29 +25,37 @@ export const createAccount = async (req, res) => {
   const newAccount = new Account(newBody);
 
   try {
+	// DB에서 smart contract 정보와 admin 계정 정보를 가져온다.
 	const fungibleTokenContract = await Contract.findOne({type: 'FT'});
 	const adminAccount = await Account.findOne({userId: 'admin'});
 
+	// DB에서 가져온 데이터를 토대로 contract 객체 생성
 	const web3FTContract = new web3.eth.Contract(abi, fungibleTokenContract.contractAddress);
 
+	// smart contract의 mintToken 함수 호출 부분
 	const dataTx = web3FTContract.methods.mintToken(account.address, 50).encodeABI();
 	const rawTx = {
 	  to: fungibleTokenContract.contractAddress,
 	  from: adminAccount.address,
 	  data: dataTx,
-	  gas: 2000000
+	  gas: 2000000,
+	  // 두번째 인자로 'pending'을 주어야지 pending 상태인 transaction 까지 계산해서 nonce 값을 제공해준다.
+	  nonce: await web3.eth.getTransactionCount(adminAccount.address, 'pending')
 	}
 
+	// transaction을 보내기전에 sign 해준다.
 	const {rawTransaction, transactionHash} = await web3.eth.accounts.signTransaction(rawTx, adminAccount.privateKey);
-	console.log('rawTransaction: ', rawTransaction);
-	console.log('transactionHash: ', transactionHash);
+
+	// DB에 위에서 생성된 transactionHash를 저장해주기위해 Transaction 모델을 이용해 데이터 생성
 	const newTransaction = new Transaction({txHash: transactionHash, method: 'mintToken', token: 50, userId: body.userId});
 
+	// DB에 account와 transaction 데이터 저장
 	await newAccount.save();
 	await newTransaction.save();
 
 	// 트랜잭션을 보내놓기만 하고 daemon이 확인 후 토큰갯수를 올려줄거기 때문에 await 불필요
-    web3.eth.sendSignedTransaction(rawTransaction);
+    web3.eth.sendSignedTransaction(rawTransaction)
+	  .on('error', console.log);
 
 	res.status(201).json(newAccount);
   } catch(err) {
