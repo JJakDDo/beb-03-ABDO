@@ -117,7 +117,7 @@ const InputText = styled.textarea`
     height:80% ;
     width: 60% ;
 
-    font-size: 55px ;
+    font-size: 30px ;
     text-align: center;
 
     overflow:hidden ;
@@ -174,14 +174,14 @@ const WriteRequestCard = ()=>{
 
         changedText = changedText.reduce((a,c)=>a+c,'');
 
-        let resultWriting = topic.concat('{',changedText,'}');
+        // let resultWriting = topic.concat('{',changedText,'}');
 
 
         // 로그인 여부 확인 , 토큰여부
         if(userState.authorizedToken !== '')
         {   // 글 쓰기 등록
             axios.post('http://127.0.0.1:4000/writing',
-                {title:topic, content:resultWriting, userId:userState.userId, nickname:userState.userNickname},
+                {title:topic, content:changedText, userId:userState.userId, nickname:userState.userNickname},
                 {headers:{authorization: "Bearer "+userState.authorizedToken}}
             )
             .then((res)=>{

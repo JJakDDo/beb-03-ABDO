@@ -26,18 +26,20 @@ const WriterId = styled.div`
     justify-content:center ;
     align-items: center;
 
-    font-size: 25px;
+    font-size: 22px;
     /* background-color: yellow; */
 
 `
+// 글쓴이 닉네임
 const WriterProfileCard = styled.div`
     display: flex;
     position:relative;
-    top:20px;
-    left:20px;
-    width: 500px;
+    top:10px;
+    left:10px;
+    width: 800px;
     height: 50px;
-    /* background-color: white; */
+    /* background-color: red; */
+    overflow:hidden;
 `
 
 // 글쓴이 아이디 닉네임을 포함하는 카드
@@ -172,7 +174,7 @@ height: 500px;
 
 
 
-const WritingCard = ({topic,nickName,userId,text})=>{
+const WritingCard = ({topic,nickName,userId,text,likes})=>{
 
     let textCopy = [...text];
     let changedText;
@@ -217,7 +219,7 @@ const WritingCard = ({topic,nickName,userId,text})=>{
             <LikeArea>
                 <LikeIconArea>
                     <LikeIcon></LikeIcon>
-                    <LikeValue>2593</LikeValue>
+                    <LikeValue>{likes.length||0}</LikeValue>
                 </LikeIconArea>
             </LikeArea>
         </WritingCardArea>
