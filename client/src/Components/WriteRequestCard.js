@@ -1,6 +1,10 @@
 import React from "react";
 import styled from "styled-components";
 import { useState } from "react";
+import axios from 'axios';
+
+import { useSelector } from "react-redux";
+import { useNavigate } from "react-router-dom";
 
 
 const PageTitle = styled.span`
@@ -142,6 +146,9 @@ const WriteRequestCard = ()=>{
     let [text,setText] = useState('');
     let [topic,setTopic] = useState('');
 
+    const userState = useSelector(state=>state.userState); // 유저상태 가져오기
+
+
     function textInput(e){
         // e 는 자동적으로 넘어온다
         setText(e.target.value); // 저장
@@ -168,14 +175,35 @@ const WriteRequestCard = ()=>{
         changedText = changedText.reduce((a,c)=>a+c,'');
 
         let resultWriting = topic.concat('{',changedText,'}');
-        alert(resultWriting);
 
-        /* 이 시점에서 서버에 글쓰기 추가 요청 할것
-        header 에 토큰도 넣어서
-        axios.post('/writing',{params:{???}})
-        */
 
-        setText(""); // 비우기
+        // 로그인 여부 확인 , 토큰여부
+        if(userState.authorizedToken !== '')
+        {   // 글 쓰기 등록
+            axios.post('http://127.0.0.1:4000/writing',
+                {title:topic, content:resultWriting, userId:userState.userId, nickname:userState.userNickname},
+                {headers:{authorization: "Bearer "+userState.authorizedToken}}
+            )
+            .then((res)=>{
+                // 보내기 성공시
+                if(res.data.status === "success"){
+                    alert('성공적으로 글을 등록하였습니다');
+
+                }
+                else{
+                    alert('보내기 실패',res.data.status, res.data.message);
+                }
+            }).catch((err)=>{
+                alert(err);
+            })        
+        }
+        else{
+            alert('로그인되지 않은 잘못된 요청입니다.(토큰없음)');
+        }
+        
+
+        setText("");  // 내용 비우기
+        setTopic(""); // 주제 비우기
     }
 
     return (
