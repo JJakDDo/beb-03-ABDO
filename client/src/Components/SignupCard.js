@@ -3,6 +3,7 @@ import styled from "styled-components";
 import { useState } from "react";
 import axios from 'axios';
 import sha256 from 'sha256';
+import { useNavigate } from "react-router-dom";
 
 // 어떤 데이터를 입력하도록 할것인지 필드명을 알립니다.
 const DataFieldName = styled.div`
@@ -89,6 +90,9 @@ const SignupCard = ()=>{
     let [userNickname,setUserNickname] = useState('');
 
     let [errMessage,setErrMessage] = useState('');
+
+    // 페이지 이동관련 함수
+    const navigate = useNavigate();
 
     // 아이디 문자열 검사
     function limiterUserIdInput(e){
@@ -237,9 +241,10 @@ const SignupCard = ()=>{
                     nickname:userNickname
                 })
                 .then((res2)=>{
-                    alert(`유저의 아이디 (${res2.data.userId}) 가 생성되었습니다.`);
+                    //alert(`유저의 아이디 (${res2.data.userId}) 가 생성되었습니다.`);
                     
                     clearUserInput(); //모든 유저 입력 지움
+                    navigate('/login'); // 로그인 페이지로 이동
                 })
                 .catch((err2)=>{
                     console.log(err2);

@@ -1,5 +1,9 @@
 import React from "react";
 import styled from "styled-components";
+import { useDispatch } from "react-redux";
+import userStateActions from "../store/userStateActions";
+import { Navigate, useNavigate } from "react-router-dom";
+
 
 import NAV from "../Components/NAV"
 import ProfileCard from "../Components/ProfieCard";
@@ -45,13 +49,18 @@ const ProfileBannerArea = styled.div`
 // 유저의 정보를 보여주는 페이지
 const AccountPage = ()=>{
 
+    const navigate = useNavigate();
+    const dispatch = useDispatch();
     return(
         <div>
             <NAV/>
+            
             <ProfileBannerAreaPivot>
                 <ProfileBannerArea>
                     <ProfileCard/>
                 </ProfileBannerArea>
+                <div style={{display:"flex",justifyContent:"center"}}><button onClick={()=>{dispatch(userStateActions.logout()); navigate('/') }}>로그아웃</button></div>
+                
             </ProfileBannerAreaPivot>
             <AccountMenuMar></AccountMenuMar>
             
