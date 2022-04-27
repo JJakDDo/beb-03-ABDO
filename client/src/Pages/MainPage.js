@@ -129,8 +129,8 @@ const MainPage = ()=>{
             {headers:{authorization:'Bearer '+userState.authorizedToken}})
             .then((res)=>{
                 if(res.data.status === "success"){
-                    // alert(`댓글을 성공적으로 보냈습니다 : ${writings[writingsIndex].id} << ${comment}`);
-                    console.log(`댓글을 성공적으로 보냈습니다 : ${writings[writingsIndex].id} << ${comment}`);
+                    alert(`댓글을 성공적으로 등록했습니다`);
+                    //console.log(`댓글을 성공적으로 보냈습니다 : ${writings[writingsIndex].id} << ${comment}`);
                     getWritingsAtServer(); // 댓글 달고나면 새로고침
                     navigate('/');
                 }
@@ -150,19 +150,24 @@ const MainPage = ()=>{
             <WritingCardWrapper>
                 <WritingCardHelperMenubar>
                     <BtnWritingCardHelper onClick={()=>{changeWritingCard('-')}}> 이전글</BtnWritingCardHelper>
-                    <BtnWritingCardHelper onClick={getWritingsAtServer} > 새로고침 </BtnWritingCardHelper>
+                    <BtnWritingCardHelper onClick={getWritingsAtServer} > 새로운 글 가져오기 </BtnWritingCardHelper>
                     <BtnWritingCardHelper onClick={()=>{changeWritingCard('+')}}> 다음글</BtnWritingCardHelper>
                 </WritingCardHelperMenubar>
                 
                 {   // 더미 데이터
-                    writings.length == 0? <WritingCard nickName={dm_writingData.nickName} userId={dm_writingData.userId} topic={dm_writingData.topic} text={dm_writingData.text} />: null
-                }
-                {
+                    writings.length == 0? 
+                    <WritingCard nickName={dm_writingData.nickName} userId={dm_writingData.userId} topic={dm_writingData.topic} text={dm_writingData.text} />
+                    :
                     <WritingCard nickName={writings[writingsIndex].nickname} userId={writings[writingsIndex].writer} topic={writings[writingsIndex].title} text={writings[writingsIndex].content} likes={writings[writingsIndex].likes||"zero"} key={`${writings[writingsIndex].writer}_${writings[writingsIndex].title}_${writings[writingsIndex].id}`} />
                 }
                 <CommentWrapper>
                   <CommentInputBox plzAddComment={plzAddComment}></CommentInputBox>
-                  <CommentCardBox commentArray={writings[writingsIndex].comments || []} ></CommentCardBox>
+                  {
+                      writings.length==0?
+                      <CommentCardBox commentArray={[]} ></CommentCardBox>
+                      :
+                      <CommentCardBox commentArray={writings[writingsIndex].comments || []} ></CommentCardBox>
+                  }
                 </CommentWrapper>
             </WritingCardWrapper>
         </div>

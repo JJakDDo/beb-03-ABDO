@@ -20,20 +20,15 @@ const InitState = {
             createdAt:"2022.04.25",
             comments:[
                 {
-                    userId:"comment user Id",
-                    nickname:"comment user nickname",
-                    comment:"comment text .... "
+                    userId:"cloudSolution",
+                    nickname:"구름의방식",
+                    comment:"딱 내맘에네... 뒤도 돌아보기 싫은 날.. 바지 끝자락이라도 잡고싶은..한해"
                 },
                 {
-                    userId:"comment user Id",
-                    nickname:"comment user nickname",
-                    comment:"comment text .... "
+                    userId:"angrybird",
+                    nickname:"마니화나그란데",
+                    comment:"이거다"
                 },
-                {
-                    userId:"comment user Id",
-                    nickname:"comment user nickname",
-                    comment:"comment text .... "
-                }
             ]
             
     
