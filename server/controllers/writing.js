@@ -5,18 +5,16 @@ import Contract from "../models/contract.js";
 import mongoose from "mongoose";
 import { web3 } from "../web3.js";
 import { abi as FTabi } from "../contract.js";
+import CustomError from "../errors/index.js";
 
 /*
   작성한 글을 db에 저장
 */
-export const postWriting = async (req, res) => {
+export const postWriting = async (req, res, next) => {
   const { title, content, nickname, userId } = req.body;
-  // req.body에 필요한 값들이 없으면 400 에러 응답
+  // req.body에 필요한 값들이 없으면 Bad Request 에러 응답
   if (!title || !content || !nickname) {
-    return res.status(400).json({
-      status: "fail",
-      message: "Title, content or nickname is missing",
-    });
+    throw CustomError.BadRequest("Title, content or nickname is missing");
   }
 
   // 해당 닉네임을 가진 유저의 db id를 가져옴
@@ -39,7 +37,7 @@ export const postWriting = async (req, res) => {
     await mintToken(userAddress, userId, 5);
     res.status(201).json({ status: "success", data: { writingId: _id } });
   } catch (err) {
-    res.status(409).json({ message: err.message });
+    throw new Error(err);
   }
 };
 
@@ -54,31 +52,22 @@ export const getWritingById = async (req, res) => {
 
   //해당 id를 가진 writing 없으면 에러 응답
   if (!data) {
-    return res.status(400).json({
-      status: "fail",
-      message: `Writing ID: ${id} does not exist!`,
-    });
+    throw CustomError.BadRequest(`Writing ID: ${id} does not exist!`);
   }
 
   const { _id, title, content, writer, comments, likes, createdAt } = data;
 
   const { userId, nickname } = await Account.findById(writer);
-  const newLikes = await Promise.all(
-    likes.map(async (id) => {
-      const { userId } = await Account.findById(id);
-      return userId;
-    })
-  );
-  const newComments = await Promise.all(
-    comments.map(async (el) => {
-      const { userId, nickname } = await Account.findById(el.userId);
-      return {
-        userId,
-        nickname,
-        comment: el.comment,
-      };
-    })
-  );
+
+  // db에 likes가 유저의 object id로 저장이 되어있기 때문에
+  // 응답으로 보내줄 때는 유저의 id로 바꿔서 보내준다.
+
+  const newLikes = await convertLikesArray(likes);
+
+  // db에 comments가 유저의 object id로 저장이 되어있기 때문에
+  // 응답으로 보내줄 때는 유저의 id와 닉네임을 추가해서 보내준다.
+  const newComments = await convertCommentsArray(comments);
+
   res.status(200).json({
     status: "success",
     data: {
@@ -99,26 +88,22 @@ export const getWritingById = async (req, res) => {
 */
 export const getAllWriting = async (req, res) => {
   const writings = await Writing.find();
+  // Array에 map을 돌 때 콜백함수가 비동기면 일반적인 방법으로는 구현이 안됨
+  // 그래서 Promise.all을 사용함
   const data = await Promise.all(
     writings.map(
       async ({ _id, title, content, writer, comments, likes, createdAt }) => {
         const { userId, nickname } = await Account.findById(writer);
-        const newLikes = await Promise.all(
-          likes.map(async (id) => {
-            const { userId } = await Account.findById(id);
-            return userId;
-          })
-        );
-        const newComments = await Promise.all(
-          comments.map(async (el) => {
-            const { userId, nickname } = await Account.findById(el.userId);
-            return {
-              userId,
-              nickname,
-              comment: el.comment,
-            };
-          })
-        );
+
+        // db에 likes가 유저의 object id로 저장이 되어있기 때문에
+        // 응답으로 보내줄 때는 유저의 id로 바꿔서 보내준다.
+
+        const newLikes = await convertLikesArray(likes);
+
+        // db에 comments가 유저의 object id로 저장이 되어있기 때문에
+        // 응답으로 보내줄 때는 유저의 id와 닉네임을 추가해서 보내준다.
+        const newComments = await convertCommentsArray(comments);
+
         return {
           id: _id,
           title,
@@ -148,28 +133,20 @@ export const addLikeToWriting = async (req, res) => {
   // writingId를 가진 writing이 있는지 확인
   const writing = await Writing.findById(writingId);
   if (!writing) {
-    return res.status(400).json({
-      status: "fail",
-      message: `Writing ID: ${writingId} does not exist!`,
-    });
+    throw CustomError.BadRequest(`Writing ID: ${writingId} does not exist!`);
   }
   const { likes, writer } = writing;
   // user가 존재하는지 확인
   const user = await Account.findOne({ userId });
   if (!user) {
-    return res.status(400).json({
-      status: "fail",
-      message: `user ID: ${userId} does not exist!`,
-    });
+    throw CustomError.BadRequest(`user ID: ${userId} does not exist!`);
   }
   const { _id } = user;
+  // 좋아요는 한번 밖에 누르지 못하기 때문에
   // 먼저 writing의 likes에 userId가 존재하는지 확인
   // 존재한다면, 에러 응답
   if (likes.includes(_id)) {
-    return res.status(400).json({
-      status: "fail",
-      message: `Cannot send like again`,
-    });
+    throw CustomError.BadRequest(`Cannot send like again`);
   }
   // writing 컬렉션에서 해당 writing likes에 userId 추가하기
   likes.push(_id);
@@ -179,15 +156,14 @@ export const addLikeToWriting = async (req, res) => {
     writer
   );
 
-  await Writing.updateOne({ _id: writingId }, { likes });
-
   try {
+    await Writing.updateOne({ _id: writingId }, { likes });
     await mintToken(writerAddress, writerId, 1);
     res.status(200).json({
       status: "success",
     });
   } catch (err) {
-    res.status(409).json({ message: err.message });
+    throw new Error(err);
   }
 };
 
@@ -200,18 +176,12 @@ export const commentToWriting = async (req, res) => {
   // writingId를 가진 writing이 있는지 확인
   const writing = await Writing.findById(writingId);
   if (!writing) {
-    return res.status(400).json({
-      status: "fail",
-      message: `Writing ID: ${writingId} does not exist!`,
-    });
+    throw CustomError.BadRequest(`Writing ID: ${writingId} does not exist!`);
   }
   // user가 존재하는지 확인
   const user = await Account.findOne({ userId });
   if (!user) {
-    return res.status(400).json({
-      status: "fail",
-      message: `user ID: ${userId} does not exist!`,
-    });
+    throw CustomError.BadRequest(`user ID: ${userId} does not exist!`);
   }
   const { _id, address: userAddress } = user;
 
@@ -221,18 +191,21 @@ export const commentToWriting = async (req, res) => {
     userId: _id,
     comment,
   });
-  await Writing.updateOne({ _id: writingId }, { comments });
 
   try {
+    await Writing.updateOne({ _id: writingId }, { comments });
     await mintToken(userAddress, userId, 1);
     res.status(200).json({
       status: "success",
     });
   } catch (err) {
-    res.status(409).json({ message: err.message });
+    throw new Error(err);
   }
 };
 
+/*
+  ERC20 토큰을 민팅한다.
+*/
 const mintToken = async (toAddress, toId, amount) => {
   return new Promise(async (resolve, reject) => {
     try {
@@ -241,24 +214,26 @@ const mintToken = async (toAddress, toId, amount) => {
       const { contractAddress } = await Contract.findOne({ type: "FT" });
 
       const gasPrice = await web3.eth.getGasPrice();
-      // const gasLimit = await web3.eth.estimateGas({
-      //   bytecode: `0x${bytecode}`,
-      // });
-
       const FTContract = new web3.eth.Contract(FTabi, contractAddress);
+      // 토큰에는 소수점 18자리가 있기 때문에 wei로 변경해준다.
       const amountInWei = web3.utils.toWei(amount.toString(), "ether");
+      // 함수를 호출하기위해 bytecode를 가져온다.
       const bytecode = FTContract.methods
         .mintToken(toAddress, amountInWei)
         .encodeABI();
+      // 함수를 호출할 때 필요한 가스량을 가져온다.
       const gasLimit = await FTContract.methods
         .mintToken(toAddress, amountInWei)
         .estimateGas({
           from: adminAddress,
           gasPrice: web3.utils.toHex(gasPrice),
         });
-      //const gasLimit = "2000000";
+
+      // pending 상태인 트랜잭션도 포함해서 transaction count를 가져온다.
+      const nonce = await web3.eth.getTransactionCount(adminAddress, "pending");
 
       const txObject = {
+        nonce: web3.utils.toHex(nonce),
         from: adminAddress,
         to: contractAddress,
         gasLimit: web3.utils.toHex(gasLimit),
@@ -283,4 +258,34 @@ const mintToken = async (toAddress, toId, amount) => {
       reject(err);
     }
   });
+};
+
+// db에 likes가 유저의 object id로 저장이 되어있기 때문에
+// 응답으로 보내줄 때는 유저의 id로 바꿔서 보내준다.
+const convertLikesArray = async (likes) => {
+  // Array에 map을 돌 때 콜백함수가 비동기면 일반적인 방법으로는 구현이 안됨
+  // 그래서 Promise.all을 사용함
+  return await Promise.all(
+    likes.map(async (id) => {
+      const { userId } = await Account.findById(id);
+      return userId;
+    })
+  );
+};
+
+// db에 comments가 유저의 object id로 저장이 되어있기 때문에
+// 응답으로 보내줄 때는 유저의 id와 닉네임을 추가해서 보내준다.
+const convertCommentsArray = async (comments) => {
+  // Array에 map을 돌 때 콜백함수가 비동기면 일반적인 방법으로는 구현이 안됨
+  // 그래서 Promise.all을 사용함
+  return await Promise.all(
+    comments.map(async (el) => {
+      const { userId, nickname } = await Account.findById(el.userId);
+      return {
+        userId,
+        nickname,
+        comment: el.comment,
+      };
+    })
+  );
 };

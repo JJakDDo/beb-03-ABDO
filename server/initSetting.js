@@ -1,13 +1,17 @@
 import { web3 } from "./web3.js";
 import Account from "./models/account.js";
 import Contract from "./models/contract.js";
-import { abi, bytecode } from "./contract.js";
 
+/*
+ 서버의 지갑을 생성한다.
+*/
 export const createServerAccount = () => {
   return new Promise(async (resolve, reject) => {
     try {
       const data = await Account.findOne({ userId: "admin" });
+      //만약 서버 계정이 db에 존재하지 않으면 새롭게 생성한다.
       if (data === null) {
+        // web3 모듈을 사용해서 지갑을 생성
         const { address, privateKey } = web3.eth.accounts.create();
         console.log("Server wallet is created!");
         console.log(`Address: ${address}`);
@@ -36,32 +40,23 @@ export const createServerAccount = () => {
   });
 };
 
-export const deployContracts = () => {
+/*
+  스마트컨트랙트를 배포한다.
+*/
+export const deployContracts = (type, abi, bytecode) => {
   return new Promise(async (resolve, reject) => {
     try {
-      const contract = await Contract.findOne({ type: "FT" });
+      const contract = await Contract.findOne({ type });
       const data = await Account.findOne({ userId: "admin" });
       if (contract === null) {
         /*
-        Ganache 환경에서는 작동함
-        */
-        // try {
-        //   const tx = await new web3.eth.Contract(abi)
-        //     .deploy({ data: "0x" + bytecode })
-        //     .send({ from: data.address, gas: 2000000, gasPrice: "1000000000000" });
-        //   console.log(`Contract Deployed Successfully: ${tx.options.address}`);
-        // } catch (err) {
-        //   console.log(err);
-        // }
-
-        /*
         원격 노드(infura)를 통해 블록체인에 접근하려면 privatekey로 먼저 sign을 해야함
         */
-        const nonce = await web3.eth.getTransactionCount(data.address);
+        const nonce = await web3.eth.getTransactionCount(
+          data.address,
+          "pending"
+        );
         const gasPrice = await web3.eth.getGasPrice();
-        // const gasLimit = await web3.eth.estimateGas({
-        //   bytecode: `0x${bytecode}`,
-        // });
 
         // 컨트랙트 배포할 때 필요한 가스량 알아내는 방법
         let contract = new web3.eth.Contract(abi);
@@ -90,11 +85,8 @@ export const deployContracts = () => {
         const { contractAddress } = await web3.eth.sendSignedTransaction(
           rawTransaction
         );
-        // const tx = await new web3.eth.Contract(abi)
-        //   .deploy({ data: "0x" + bytecode })
-        //   .send({ from: data.address, gas: 2000000, gasPrice: "1000000000000" });
         console.log(`Contract Deployed Successfully: ${contractAddress}`);
-        const newContract = new Contract({ contractAddress, type: "FT" });
+        const newContract = new Contract({ contractAddress, type });
 
         await newContract.save();
         resolve();
@@ -119,14 +111,17 @@ export const deployContracts = () => {
 export const getFaucet = async (amount) => {
   const data = await Account.findOne({ userId: "admin" });
   const contract = await Contract.findOne({ type: "FT" });
+  // 서버 계정을 만들어야 ETH를 받을 수 있음
   if (data === null) {
     console.log("Server account is not created!");
     return;
   }
+  // 컨트랙트가 이미 배포된 상태이면 ETH를 받을 필요가 없음
   if (contract !== null) {
     console.log("No need to get initial ETH");
     return;
   }
+  // 가나슈 환경에서 첫번째 계정으로부터 ETH를 받음
   const faucetAccount = (await web3.eth.getAccounts())[0];
   return new Promise(async (resolve, reject) => {
     try {
