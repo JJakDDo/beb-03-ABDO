@@ -2,6 +2,7 @@ import Account from "../models/account.js";
 import mongoose from "mongoose";
 import { deployContracts } from "../initSetting.js";
 import CustomError from "../errors/index.js";
+import { abi, bytecode } from "../contract.js";
 
 /*
   admin 계정만 컨트랙트를 배포
@@ -26,7 +27,7 @@ export const deploy = async (req, res, next) => {
 
   try {
     // ERC20 컨트랙트 배포
-    await deployContracts("FT");
+    await deployContracts("FT", abi, bytecode);
     // ERC721 컨트랙트 배포
     //await deployContracts("NFT");
 

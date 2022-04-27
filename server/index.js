@@ -51,6 +51,7 @@ mongoose
       await deployContracts("FT", abi, bytecode);
       // ERC721 컨트랙트 배포
       //await deployContracts("NFT");
+      //setToken(nftAbi);
     })
   )
   .catch((err) => console.log(err.message));
