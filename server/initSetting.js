@@ -137,3 +137,55 @@ export const getFaucet = async (amount) => {
     }
   });
 };
+
+export const setToken = async (nftAbi) => {
+  const admin = await Account.findOne({ userId: "admin" });
+  if (!admin) {
+    console.log("Server account is not created!");
+    return;
+  }
+  const FTcontract = await Contract.findOne({ type: "FT" });
+  if (!FTcontract) {
+    console.log("ERC20 Smart Contract is not deployed!");
+    return;
+  }
+  const NFTcontract = await Contract.findOne({ type: "NFT" });
+  if (!NFTcontract) {
+    console.log("ERC721 Smart Contract is not deployed!");
+    return;
+  }
+  const NFTContract = new web3.eth.Contract(
+    nftAbi,
+    NFTcontract.contractAddress
+  );
+  // 함수를 호출하기위해 bytecode를 가져온다.
+  const bytecode = NFTContract.methods
+    .setToken(FTcontract.contractAddress)
+    .encodeABI();
+  // 함수를 호출할 때 필요한 가스량을 가져온다.
+  const gasLimit = await NFTContract.methods
+    .setToken(FTcontract.contractAddress)
+    .estimateGas({
+      from: admin.address,
+      gasPrice: web3.utils.toHex(gasPrice),
+    });
+
+  // pending 상태인 트랜잭션도 포함해서 transaction count를 가져온다.
+  const nonce = await web3.eth.getTransactionCount(admin.address, "pending");
+
+  const txObject = {
+    nonce: web3.utils.toHex(nonce),
+    from: admin.address,
+    to: NFTcontract.contractAddress,
+    gasLimit: web3.utils.toHex(gasLimit),
+    gasPrice: web3.utils.toHex(gasPrice),
+    data: bytecode,
+  };
+  const { rawTransaction } = await web3.eth.accounts.signTransaction(
+    txObject,
+    admin.privateKey
+  );
+
+  await web3.eth.sendSignedTransaction(rawTransaction);
+  console.log("ERC20 token is set!");
+};
