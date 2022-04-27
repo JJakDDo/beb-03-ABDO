@@ -1,10 +1,11 @@
 import React,{ useState } from "react";
-import { Link } from "react-router-dom";
+import { Link,useNavigate } from "react-router-dom";
 import styled from "styled-components";
 import axios from "axios";
+import sha256 from 'sha256';
 
 import userStateActions from "../store/userStateActions";
-import { useSelector,userDispatcher, useDispatch } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
 
 // 어떤 데이터를 입력하도록 할것인지 필드명을 알립니다.
 const DataFieldName = styled.div`
@@ -104,8 +105,11 @@ const LoginCard = ()=>{
     let [errMessage,setErrMessage] = useState('');
 
     // 상태관리 관련 함수
-    const userState = useSelector(state=>state);
+    const userState = useSelector(state=>state.userState);
     const dispatch = useDispatch(); // store에 전송하는 함수
+
+    // 페이지 이동 관련 함수
+    const navigate = useNavigate();
 
     // 아이디 문자열 검사
     function limiterUserIdInput(e){
@@ -172,12 +176,13 @@ const LoginCard = ()=>{
 
             axios.post('http://127.0.0.1:4000/account/login',{
                 userId:userId,
-                password:userPw
+                password:sha256(userId+userPw+process.env.REACT_APP_CLIENTKEY)
             })
             .then((res)=>{
                 //alert(`유저 '${res.data.userId}' 로그인 되었습니다. token : ${res.data.token}`);
                 dispatch(userStateActions.login(res.data.userId,res.data.nickname,res.data.token,0));
-                alert(`reduxStore :: userState:{userId:${userState.userId}, userToken:${userState.authorizedToken}}`);
+                //alert(`reduxStore :: userState:{userId:${userState.userId}, userToken:${userState.authorizedToken}}`);
+                navigate('/');
             })
             .catch((err)=>{
                 alert(`로그인 실패하였습니다.${err}`);

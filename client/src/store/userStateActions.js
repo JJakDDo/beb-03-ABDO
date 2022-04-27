@@ -23,6 +23,13 @@ const userStateActions ={
                 INK:0
             }
         }
+    },
+
+    setAllWritings : (writings)=>{
+       return {
+           type:"SET_ALL_WRITINGS",
+           newWritings:writings
+       }
     }
 }
 

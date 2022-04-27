@@ -1,6 +1,8 @@
-import React,{ useState } from 'react';
+import React,{ useState,useEffect } from 'react';
 import {Link} from 'react-router-dom';
 import styled from 'styled-components';
+import { useSelector,useDispatch } from 'react-redux';
+import userStateActions from "../store/userStateActions";
 
 import NavIcon from './NAVIcon';
 
@@ -54,7 +56,13 @@ const NavIconBox = styled.div`
 `
 
 const NAV = ()=>{
-    let isAccountValid = false;
+
+    const userState = useSelector(state=>state.userState);
+    
+    const [isLogined,setIsLogined] = useState(userState.authorizedToken !== ''? true:false); // 로그인 여부    
+
+    const dispatch = useDispatch();
+
     
 
     return (
@@ -64,11 +72,12 @@ const NAV = ()=>{
 
             <NavIconBox>
                 <NavIcon url="/" iconName="view" />
-                <NavIcon url="/writing" iconName="writing" />
+                {isLogined? <NavIcon url="/writing" iconName="writing" />:null}
                 <NavIcon url="/store" iconName="store" />
-                { isAccountValid? //계정 로그인이 되어있는가? 마이페이지 : 로그인페이지
+                { isLogined? //계정 로그인이 되어있는가? 마이페이지 : 로그인페이지
                 <NavIcon url="/account" iconName="account" /> : 
                 <NavIcon url="/login" iconName="login" />}
+                
             </NavIconBox>
         </NavBar>
     

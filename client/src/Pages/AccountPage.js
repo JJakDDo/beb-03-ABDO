@@ -1,5 +1,9 @@
 import React from "react";
 import styled from "styled-components";
+import { useDispatch } from "react-redux";
+import userStateActions from "../store/userStateActions";
+import { Navigate, useNavigate } from "react-router-dom";
+
 
 import NAV from "../Components/NAV"
 import ProfileCard from "../Components/ProfieCard";
@@ -37,6 +41,26 @@ const ProfileBannerArea = styled.div`
 
 `
 
+// 로그아웃 버튼
+const BtnLogout = styled.button`
+    background-color: white;
+    border: none;
+    box-shadow: 0px 0px 14px rgb(225,208,205) ;
+    color: rgb(225,208,205);
+    font-weight: 700;
+    user-select: none;
+    margin: 20px;
+    font-size: 24px;
+
+    &:hover{
+        background-color: rgb(235,218,215);
+        color:rgb(235,190,200);
+    };
+    &:active{
+        filter:drop-shadow(0 0 5px rgb(225,206,205));
+    }
+`
+
 // 프로필 배너 영역 -> 프로필 카드
 
 // 프로필 배너 영역 -> 프로필 카드 -> 프로필 내용
@@ -45,13 +69,18 @@ const ProfileBannerArea = styled.div`
 // 유저의 정보를 보여주는 페이지
 const AccountPage = ()=>{
 
+    const navigate = useNavigate();
+    const dispatch = useDispatch();
     return(
         <div>
             <NAV/>
+            
             <ProfileBannerAreaPivot>
                 <ProfileBannerArea>
                     <ProfileCard/>
                 </ProfileBannerArea>
+                <div style={{display:"flex",justifyContent:"center"}}><BtnLogout onClick={()=>{dispatch(userStateActions.logout()); navigate('/') }}>로그아웃</BtnLogout></div>
+                
             </ProfileBannerAreaPivot>
             <AccountMenuMar></AccountMenuMar>
             
