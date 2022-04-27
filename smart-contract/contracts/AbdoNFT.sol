@@ -11,17 +11,16 @@ contract AbdoNFT is ERC721URIStorage, Ownable {
     using Counters for Counters.Counter;
     Counters.Counter private _tokenIds;
     IERC20 token;
-    uint256 nftPrice;
 
-    constructor() ERC721("AbdoNFT", "PNFT") {
-        nftPrice = 100e18;
-    }
+    constructor() ERC721("AbdoNFT", "PNFT") {}
 
-    function mintNFT(address recipient, string memory tokenURI)
-        public
-        onlyOwner
-        returns (uint256)
-    {
+    // 2: mintNFT 함수를 서버에서 호출할 때 인자값을 하나 더 넣어줌
+    //
+    function mintNFT(
+        address recipient,
+        string memory tokenURI,
+        uint256 nftPrice
+    ) public onlyOwner returns (uint256) {
         require(token.balanceOf(recipient) > nftPrice);
 
         token.transferFrom(recipient, msg.sender, nftPrice);
