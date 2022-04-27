@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: MIT
-pragma solidity 0.8.7;
+pragma solidity 0.8.13;
 
 import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
 import "@openzeppelin/contracts/utils/Counters.sol";
@@ -11,19 +11,16 @@ contract AbdoNFT is ERC721URIStorage, Ownable {
     using Counters for Counters.Counter;
     Counters.Counter private _tokenIds;
     IERC20 token;
-    uint256 nftPrice;
 
-    constructor() ERC721("AbdoNFT", "PNFT") {
-        nftPrice = 100e18;
-    }
+    constructor() ERC721("AbdoNFT", "PNFT") {}
 
-    function mintNFT(address recipient, string memory tokenURI)
-        public
-        onlyOwner
-        returns (uint256)
-    {
-        //nft price 가 다르니깐 없애야 하고,
-        // nft 가격을 어디서 가져와야 하는데 mint nft로 토큰 uri
+    // 2: mintNFT 함수를 서버에서 호출할 때 인자값을 하나 더 넣어줌
+    //
+    function mintNFT(
+        address recipient,
+        string memory tokenURI,
+        uint256 nftPrice
+    ) public onlyOwner returns (uint256) {
         require(token.balanceOf(recipient) > nftPrice);
 
         token.transferFrom(recipient, msg.sender, nftPrice);
