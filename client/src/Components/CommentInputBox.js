@@ -63,6 +63,7 @@ const CommentInputBox = ({plzAddComment})=>{
     // 댓글전송 버튼을 누르면 부모컴포넌트 MainPage.js 에게 댓글 추가해달라고 요청
     function addComment(){
         plzAddComment(commentText); // 부모함수에서 준 함수 호출, 현재 입력된 값을 넣어서
+        setCommentText('');
     }
 
 

@@ -219,7 +219,7 @@ const WritingCard = ({topic,nickName,userId,text,likes})=>{
             <LikeArea>
                 <LikeIconArea>
                     <LikeIcon></LikeIcon>
-                    <LikeValue>{likes.length||0}</LikeValue>
+                    <LikeValue>{likes? likes.length : 0}</LikeValue>
                 </LikeIconArea>
             </LikeArea>
         </WritingCardArea>

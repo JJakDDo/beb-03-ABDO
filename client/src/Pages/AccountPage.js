@@ -1,13 +1,14 @@
-import React from "react";
+import React,{useState} from "react";
 import styled from "styled-components";
-import { useDispatch } from "react-redux";
+import { useSelector,useDispatch } from "react-redux";
 import userStateActions from "../store/userStateActions";
 import { Navigate, useNavigate } from "react-router-dom";
-
+import axios from "axios";
 
 import NAV from "../Components/NAV"
 import ProfileCard from "../Components/ProfieCard";
 import AccountMenuMar from "./AccountMenuBar";
+import WritingThumbnailCard from "../Components/WritingThumbnailCard";
 
 
 const AreaIndex = styled.div`
@@ -69,8 +70,39 @@ const BtnLogout = styled.button`
 // 유저의 정보를 보여주는 페이지
 const AccountPage = ()=>{
 
+    const userState = useSelector(state=>state.userState);
+    const myWritingsState = useSelector(state=>state.myWritings);
+
+    const [myWritingDatas,setMyWritingDatas] = useState(myWritingsState)
+
     const navigate = useNavigate();
     const dispatch = useDispatch();
+
+    /**
+     * 로그인 되어있는 사용자의 모든 글들을 가져와 store 에 저장합니다.
+     */
+    function plzGetUserWritings(){
+        axios.get('http://127.0.0.1:4000/writing')
+        .then((res)=>{
+            // 모든글 다 가져옴
+            let allWritings = res.data.data;
+            // 내 글만 필터링
+            let myWritings=allWritings.filter((elem)=>{if(elem.writer == userState.userId){return true}});
+            // 스토어에 저장
+            dispatch(userStateActions.setMyWritings(myWritings));
+            
+            setTimeout(()=>{
+                alert(JSON.stringify(myWritingsState));
+                setMyWritingDatas(myWritingsState);
+                }
+                ,1000);
+            // 테스트
+        })
+        .catch((err)=>{
+            alert(`나의 글을 가져오는데 실패하였습니다.${err}`);
+        })
+    }
+
     return(
         <div>
             <NAV/>
@@ -79,10 +111,22 @@ const AccountPage = ()=>{
                 <ProfileBannerArea>
                     <ProfileCard/>
                 </ProfileBannerArea>
-                <div style={{display:"flex",justifyContent:"center"}}><BtnLogout onClick={()=>{dispatch(userStateActions.logout()); navigate('/') }}>로그아웃</BtnLogout></div>
+                <div style={{display:"flex",justifyContent:"center"}}>
+                    <BtnLogout onClick={()=>{plzGetUserWritings()}}>유저정보 업데이트 요청</BtnLogout>
+                    <BtnLogout onClick={()=>{dispatch(userStateActions.logout()); dispatch(userStateActions.setClearMyWritings()); navigate('/') }}>로그아웃</BtnLogout>
+                </div>
                 
             </ProfileBannerAreaPivot>
             <AccountMenuMar></AccountMenuMar>
+            {
+                myWritingDatas.length == 0?
+                <div style={{display:"flex",justifyContent:"center"}}>등록된 글이 없습니다</div>
+                :
+                myWritingDatas.map((elem,idx)=>{
+                    return <WritingThumbnailCard topic={elem.title}/>
+                })
+
+            }
             
         </div>
     )

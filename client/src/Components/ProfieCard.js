@@ -1,6 +1,6 @@
-import React from "react";
+import React,{useState} from "react";
 import styled from "styled-components";
-
+import { useSelector } from "react-redux";
 
 const ProfieCardArea = styled.div`
     box-sizing: border-box;
@@ -66,6 +66,8 @@ const TokenIcon = styled.div`
 const UserBalanceCounter = styled.div`
     font-size: 24px;
     color: rgb(128,80,80);
+    /* color:white; */
+    text-shadow: 0 0 2px rgb(200, 29, 13 )
 `
 const TokenSymbol = styled.div`
     font-size: 24px;
@@ -81,23 +83,17 @@ const TokenImg = styled.img.attrs({
 
 const ProfileCard = ()=>{
 
-    let UserData = {
-        nickName:"닉네임",
-        userId:"Id1234",
-        Balance:"25935",
-        Writings:[
-            {topic:"주제",like:124},{topic:"주제",like:124},{topic:"주제",like:124}
-        ]
-    }
-
+    const userState = useSelector(state=>state.userState); // 유저의 정보 가져오기
+    
+    //alert(JSON.stringify(userState))
     return(
         <ProfieCardArea>
             <ProfileImage></ProfileImage>
-            <UserNicknameDisplayer>{UserData.nickName}</UserNicknameDisplayer>
-            <UserIdDisplayer>{UserData.userId}</UserIdDisplayer>
+            <UserNicknameDisplayer>{userState.userNickname}</UserNicknameDisplayer>
+            <UserIdDisplayer>{userState.userId}</UserIdDisplayer>
             <UserBalanceDisplayerBox>
                 <div/>
-                <TokenIcon><TokenImg/></TokenIcon><UserBalanceCounter>{UserData.Balance}</UserBalanceCounter><TokenSymbol>INK</TokenSymbol>
+                <TokenIcon><TokenImg/></TokenIcon><UserBalanceCounter>{userState.INK}</UserBalanceCounter><TokenSymbol>INK</TokenSymbol>
                 <div/>
             </UserBalanceDisplayerBox>
         </ProfieCardArea>

@@ -180,9 +180,20 @@ const LoginCard = ()=>{
             })
             .then((res)=>{
                 //alert(`유저 '${res.data.userId}' 로그인 되었습니다. token : ${res.data.token}`);
-                dispatch(userStateActions.login(res.data.userId,res.data.nickname,res.data.token,0));
+                // 현재 닉네임 값이 들어오지 않고 있다.
+                //dispatch(userStateActions.login(res.data.userId,res.data.nickname,res.data.token,0));
+                let authorizedToken = res.data.token;
+
+                axios.get(`http://127.0.0.1:4000/account/${userId}`)
+                .then((res2)=>{
+                    dispatch(userStateActions.login(res2.data.userId,res2.data.nickname,authorizedToken,res2.data.token,res2.data.nft));
+                    navigate('/');
+                })
+                .catch((err)=>{
+                    alert(`해당 유저 정보를가져오지 못하였습니다. ${err}`);
+                })
                 //alert(`reduxStore :: userState:{userId:${userState.userId}, userToken:${userState.authorizedToken}}`);
-                navigate('/');
+                
             })
             .catch((err)=>{
                 alert(`로그인 실패하였습니다.${err}`);

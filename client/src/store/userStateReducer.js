@@ -8,6 +8,7 @@ const InitState = {
         userNickname:"",
         authorizedToken:"",
         INK:0,
+        NFT:[]
     },
     writings:[
         {
@@ -20,25 +21,21 @@ const InitState = {
             createdAt:"2022.04.25",
             comments:[
                 {
-                    userId:"comment user Id",
-                    nickname:"comment user nickname",
-                    comment:"comment text .... "
+                    userId:"cloudSolution",
+                    nickname:"구름의방식",
+                    comment:"딱 내맘에네... 뒤도 돌아보기 싫은 날.. 바지 끝자락이라도 잡고싶은..한해"
                 },
                 {
-                    userId:"comment user Id",
-                    nickname:"comment user nickname",
-                    comment:"comment text .... "
+                    userId:"angrybird",
+                    nickname:"마니화나그란데",
+                    comment:"이거다"
                 },
-                {
-                    userId:"comment user Id",
-                    nickname:"comment user nickname",
-                    comment:"comment text .... "
-                }
             ]
             
     
         }
-    ]
+    ],
+    myWritings:[]
 }
 
 // 0.3 단계. 스테이트에 적용하기 위한 새로운 상태 객체를 뱉어내는 Reducer
@@ -59,6 +56,13 @@ const stateReducer = (state=InitState, action)=>{
             //console.log(`글이 등록됩니다. 총 ${action.newWritings.length}`); //글 개수 확인
             return Object.assign({},state,{writings:action.newWritings}); // 글 부분만 새로 설정
             break;
+        }
+        case "SET_MY_WRITINGS":{
+            return Object.assign({},state,{myWritings:action.newMyWritings}); // 내 글들
+            break;
+        }
+        case "SET_CLEAR_MY_WRITINGS":{
+            return Object.assign({},state,{myWritings:action.newMyWritings}); // 빈 글들
         }
         default: return state;        
     }
