@@ -102,8 +102,8 @@ export const login = async (req, res) => {
 
 	if(foundAccount) {
 	  if(foundAccount.password === body.password) {
-		const token = jwt.sign({userId: foundAccount.userId, nickname: foundAccount.nickname}, '123');
-		res.status(201).json({token, userId: foundAccount.userId});
+		const jsonWebToken = jwt.sign({userId: foundAccount.userId, nickname: foundAccount.nickname}, '123');
+		res.status(201).json({jsonWebToken, userId: foundAccount.userId, nickname: foundAccount.nickname, token: foundAccount.token, nft: foundAccount.nft});
 	  } else{
 		res.status(404).json({message: 'Wrong password'});
 	  }
