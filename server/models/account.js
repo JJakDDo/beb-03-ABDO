@@ -1,4 +1,5 @@
 import mongoose from 'mongoose';
+import Nft from './nft.js';
 
 const accountSchema = mongoose.Schema({
   userId: String,
@@ -11,7 +12,7 @@ const accountSchema = mongoose.Schema({
 	default: 0
   },
   nft: {
-	type: [mongoose.ObjectId],
+	type: [Number],
 	default: []
   }
 });

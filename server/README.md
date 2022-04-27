@@ -281,3 +281,119 @@ Content-Type: application/json
   "status": "success"
 }
 ```
+
+## Create NFT
+
+### Request
+
+`POST http://127.0.0.1:4000/nft`
+
+### Required Body
+
+```
+{
+  "productId": 1,
+  "name": "Book_Simple_Red",
+  "url": "https://bafybeihx46cyzikbgrb6yxbmwyevlapkoksgp35xh4y7izl5xgg56egxxy.ipfs.nftstorage.link/metadata.json",
+  "price": 3000
+}
+```
+
+### Response
+
+```
+{
+  "productId": 1,
+  "name": "Book_Simple_Red",
+  "url": "https://bafybeihx46cyzikbgrb6yxbmwyevlapkoksgp35xh4y7izl5xgg56egxxy.ipfs.nftstorage.link/metadata.json",
+  "price": 3000,
+  "_id": "6268e62cf439c03ef9ec69a0",
+  "__v": 0
+}
+```
+
+## Get NFTs
+
+### Request
+
+`GET http;//127.0.0.1:4000/nft`
+
+### Response
+
+```
+[
+    {
+        "_id": "6268c3a4c453b8ba5146f2cf",
+        "productId": 1,
+        "name": "Book_Simple_Red",
+        "url": "https://bafybeihx46cyzikbgrb6yxbmwyevlapkoksgp35xh4y7izl5xgg56egxxy.ipfs.nftstorage.link/metadata.json",
+        "price": 3000,
+        "__v": 0
+    },
+    {
+        "_id": "6268c3bdc453b8ba5146f2d1",
+        "productId": 2,
+        "name": "Book_Traditional_Black",
+        "url": "https://bafybeigsltclk7o5iskyvf5orhqsh54xa2twksmxhjymk3nqzv6ryfa3ri.ipfs.nftstorage.link/metadata.json",
+        "price": 5000,
+        "__v": 0
+    },
+    {
+        "_id": "6268c3c8c453b8ba5146f2d3",
+        "productId": 3,
+        "name": "Book_Special_BlackGold",
+        "url": "https://bafybeihza6z7pvbds2u6wz6mtmmce7re746jru2f2gx55nm2mierh77gve.ipfs.nftstorage.link/metadata.json",
+        "price": 8000,
+        "__v": 0
+    },
+    {
+        "_id": "6268c3d1c453b8ba5146f2d5",
+        "productId": 4,
+        "name": "Book_Special_WhiteGold",
+        "url": "https://bafybeid4ihocuofauv327ymzk4ifzrcdl35iodaqcnymkab4gxtwx6h72e.ipfs.nftstorage.link/metadata.json",
+        "price": 8000,
+        "__v": 0
+    } 
+]
+```
+
+## Get NFT
+
+### Request
+
+`GET http://127.0.0.1:4000/nft/:productId`
+
+### Response
+
+```
+{
+    "_id": "6268c3a4c453b8ba5146f2cf",
+    "productId": 1,
+    "name": "Book_Simple_Red",
+    "url": "https://bafybeihx46cyzikbgrb6yxbmwyevlapkoksgp35xh4y7izl5xgg56egxxy.ipfs.nftstorage.link/metadata.json",
+    "price": 3000,
+    "__v": 0
+}
+```
+
+## Buy NFT
+
+### Request
+
+`POST http://127.0.0.1:4000/nft/:productId`
+
+### Required Body
+
+```
+{
+  userId: BUYER'S USERID
+}
+```
+
+### Response
+
+```
+[
+    1 // This represents NFT's productId
+]
+```
