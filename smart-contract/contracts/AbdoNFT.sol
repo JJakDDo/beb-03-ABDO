@@ -14,8 +14,6 @@ contract AbdoNFT is ERC721URIStorage, Ownable {
 
     constructor() ERC721("AbdoNFT", "PNFT") {}
 
-    // 2: mintNFT 함수를 서버에서 호출할 때 인자값을 하나 더 넣어줌
-    //
     function mintNFT(
         address recipient,
         string memory tokenURI,

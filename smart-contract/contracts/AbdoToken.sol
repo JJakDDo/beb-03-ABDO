@@ -19,4 +19,14 @@ contract AbdoToken is ERC20, Ownable {
 
         return true;
     }
+
+    function approve(address nftContract, uint256 nftPrice)
+        external
+        returns (bool)
+    {
+        // uint256 currentAllownace = _allowances[msg.sender][spender];
+        // require(currentAllownace >= nftPrice, "ERC20: Transfer nftPrice exceeds allowance");
+        // _approve(msg.sender, spender, currentAllownace, nftPrice);
+        //  return true;
+    }
 }
