@@ -174,7 +174,7 @@ height: 500px;
 
 
 
-const WritingCard = ({topic,nickName,userId,text,likes})=>{
+const WritingCard = ({topic,nickName,userId,text,likes,writingsId,plzAddLike})=>{
 
     let textCopy = [...text];
     let changedText;
@@ -198,6 +198,12 @@ const WritingCard = ({topic,nickName,userId,text,likes})=>{
         if(textRow.length > 0){textArr.push(textRow); textRow=''};
         changedText=textArr;
     }
+
+    // 좋아요
+    function addLike(){
+        console.log("좋아요");
+        plzAddLike(writingsId); // 이 글이 좋아요가 표시되었어요!
+    }
     
 
     return(
@@ -218,7 +224,7 @@ const WritingCard = ({topic,nickName,userId,text,likes})=>{
             </WritingTextArea>
             <LikeArea>
                 <LikeIconArea>
-                    <LikeIcon></LikeIcon>
+                    <LikeIcon onClick={addLike}></LikeIcon>
                     <LikeValue>{likes? likes.length : 0}</LikeValue>
                 </LikeIconArea>
             </LikeArea>

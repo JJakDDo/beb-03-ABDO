@@ -27,6 +27,19 @@ const userStateActions ={
         }
     },
 
+    updateUserInfo : (userId,userNickname,authorizedToken, INK,NFT)=>{
+        return {
+            type: "UPDATE_USER_INFO",
+            userNewState:{ // state 에 저장될 상태
+                    userId,
+                    userNickname,
+                    authorizedToken,
+                    INK,
+                    NFT
+            }
+        }
+    },
+
     /**
      * 모든 글들을 가져와 Store 에 저장합니다.
      * @param {Array} writings DB의 모든 글들

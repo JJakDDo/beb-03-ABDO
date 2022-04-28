@@ -67,7 +67,7 @@ const UserBalanceCounter = styled.div`
     font-size: 24px;
     color: rgb(128,80,80);
     /* color:white; */
-    text-shadow: 0 0 2px rgb(200, 29, 13 )
+    text-shadow: 0 0 2px rgb(200, 29, 13 );
 `
 const TokenSymbol = styled.div`
     font-size: 24px;

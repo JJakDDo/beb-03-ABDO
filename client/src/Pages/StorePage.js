@@ -6,7 +6,7 @@ import NAV from "../Components/NAV"
 import NFTProductCard from "../Components/NFTProductCard";
 
 import ServerRequestManager from "../RequestServer/ServerRequestManager";
-// import axios from "axios";
+
 
 const AreaIndex = styled.div`
     color:rgb(225, 208, 205);
@@ -19,7 +19,38 @@ const NftCardBox = styled.div`
 
     display: flex;
     /* background-color:red ; */
+    justify-content:center ;
 
+`
+
+const ProductMenuBar = styled.div`
+    
+    margin-top: 100px;
+    width: 100%;
+    height: 100px;
+    display: flex;
+    justify-content: center;
+
+`
+
+const BtnProductUpdate = styled.button`
+    background-color: white;
+    border: none;
+    border-radius: 20px 20px 20px 20px ;
+    box-shadow: 0px 0px 14px rgb(225,208,205) ;
+    color: rgb(225,208,205);
+    font-weight: 700;
+    user-select: none;
+    margin: 20px;
+    font-size: 24px;
+
+    &:hover{
+        background-color: rgb(235,218,215);
+        color:rgb(235,190,200);
+    };
+    &:active{
+        filter:drop-shadow(0 0 5px rgb(225,206,205));
+    }
 `
 
 
@@ -31,7 +62,11 @@ const StorePage = ()=>{
     const storeNFTProducts = useSelector(state=>state.NFTProducts);
     const [isLoading, setIsLoading] = useState(false);
 
-    const [NFTProducts,setNFTProducts] = useState(storeNFTProducts)
+    const [NFTProducts,setNFTProducts] = useState(storeNFTProducts);
+
+    useEffect(()=>{
+        updateProuducts();
+    },[])
     
     /** 서버로부터 nft 들을 업데이트 받아 store 저장후 state 에 적용하는 함수 */
     function updateProuducts(){
@@ -83,20 +118,18 @@ const StorePage = ()=>{
     return(
         <div>
             <NAV/>
-            <AreaIndex>
-                this Area is StorePage
-            </AreaIndex>
+            <ProductMenuBar>
+                <BtnProductUpdate onClick={updateProuducts}>상품 업데이트 요청</BtnProductUpdate>
+            </ProductMenuBar>
             <div>
-                
-                <button onClick={updateProuducts} style={{marginTop:"50px"}}>업데이트</button>
-            </div>
-            <div>
-                <button onClick={showStore}> 상황 </button>
                 {
                     isLoading?
-                    <div>"상품을 업데이트 하는 중입니다."</div>
+                    <div style={{display:"flex",justifyContent:"center",height:"20px",width:"100%",userSelect:"hidden"}}>
+                        "상품을 업데이트 하는 중입니다."
+                    </div>
                     :
-                    null
+                    <div style={{display:"flex",justifyContent:"center",height:"20px",width:"100%"}}/>
+
                 }
                 <NftCardBox>
                     {
@@ -105,7 +138,7 @@ const StorePage = ()=>{
                             null    
                             :
                             NFTProducts.map((elem,idx)=>{
-                                return <NFTProductCard NFTInfo={elem} key={elem.name}/>
+                                return <NFTProductCard NFTInfo={elem} key={elem.name} isProduct={true}/>
                             })
                         ):"상품이 없습니다. 상품을 업데이트 해주세요"
                     }

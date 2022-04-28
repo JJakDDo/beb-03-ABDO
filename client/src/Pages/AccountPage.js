@@ -1,21 +1,17 @@
-import React,{useState} from "react";
+import React,{useEffect, useState} from "react";
 import styled from "styled-components";
 import { useSelector,useDispatch } from "react-redux";
 import userStateActions from "../store/userStateActions";
-import { Navigate, useNavigate } from "react-router-dom";
-import axios from "axios";
+import { useNavigate } from "react-router-dom";
 
 import NAV from "../Components/NAV"
 import ProfileCard from "../Components/ProfieCard";
 import AccountMenuMar from "./AccountMenuBar";
 import WritingThumbnailCard from "../Components/WritingThumbnailCard";
+import ServerRequestManager from "../RequestServer/ServerRequestManager";
+import NFTProductCard from "../Components/NFTProductCard";
 
-
-const AreaIndex = styled.div`
-    color:rgb(225, 208, 205);
-    font-weight: 500;
-    font-size: 55px;
-`
+import NFT_Products from "../Data/NFT_Products.json"
 
 // 프로필 배너의 위치가 변하더라도 기준이 되는 Pivot 을 정해줄 컴포넌트
 const ProfileBannerAreaPivot = styled.div`
@@ -62,9 +58,15 @@ const BtnLogout = styled.button`
     }
 `
 
-// 프로필 배너 영역 -> 프로필 카드
+// 유저가 가지고 있는 아이템 정렬 영역
+const StorageArea = styled.div`
+    width:90% ;
+    padding:20px;
 
-// 프로필 배너 영역 -> 프로필 카드 -> 프로필 내용
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+`
 
 
 // 유저의 정보를 보여주는 페이지
@@ -72,35 +74,133 @@ const AccountPage = ()=>{
 
     const userState = useSelector(state=>state.userState);
     const myWritingsState = useSelector(state=>state.myWritings);
+    const myNFTState = userState.NFT; //[3,4]
 
     const [myWritingDatas,setMyWritingDatas] = useState(myWritingsState)
+    const [myStorageType,setMyStorageType]=useState('writings');
+    const [NFTData, setNFTData] = useState([]); // 유저가 현재 가지고있는 NFT 들의 세부데이터를 참조하기위해 선언
 
     const navigate = useNavigate();
     const dispatch = useDispatch();
 
+    // 초기화
+    useEffect(()=>{
+        plzGetUserWritings();
+        getNFTDataAndSave();
+        updateUserInfo();
+    },[])
+
+
+    // 로그인하여 받은 토큰과 userId 로 유저의 정보를 업데이트
+    function updateUserInfo(){
+        if(userState.authorizedToken !== '')
+        {
+            ServerRequestManager.getUserInfo(userState.userId,userState.authorizedToken)
+            .then((res)=>{
+                // 받은 정보로 다시 업데이트
+                dispatch(userStateActions.updateUserInfo(
+                    res.userId,
+                    res.userNickname,
+                    res.authorizedToken,
+                    res.INK,
+                    res.NFT
+                ));
+            })
+            .catch((err)=>{
+                alert(err)
+            })
+        }
+        else{
+            alert(`로그인이 필요합니다.`);
+            navigate('/login');
+        }
+    }
+
     /**
-     * 로그인 되어있는 사용자의 모든 글들을 가져와 store 에 저장합니다.
+     * 서버로부터 모든 NFT 의 정보를 요청하여 State 에 저장합니다.
+     * 이는 유저가 가지고있는 NFT들이 어떠한 정보를 가지고 있는지를, 해당 State 에서 찾습니다.
      */
-    function plzGetUserWritings(){
-        axios.get('http://127.0.0.1:4000/writing')
-        .then((res)=>{
-            // 모든글 다 가져옴
-            let allWritings = res.data.data;
-            // 내 글만 필터링
-            let myWritings=allWritings.filter((elem)=>{if(elem.writer == userState.userId){return true}});
-            // 스토어에 저장
-            dispatch(userStateActions.setMyWritings(myWritings));
-            
+    function getNFTDataAndSave (){
+        ServerRequestManager.getAllNFTProducts()
+        .then((res)=>{            
+            const nftObjects = res.data; // 서버에서 받아온 모든 NFT 정보
+            let resultNFTObjects = [];
+
+            for(let i = 0 ; i < nftObjects.length ; i++)
+            {
+                let nftObj = nftObjects[i];
+                ServerRequestManager.getMetaDataFromURl(nftObj.url)
+                .then((res)=>{
+                    // console.log(JSON.stringify(res));
+
+                    resultNFTObjects.push({
+                        _id : nftObj._id,
+                        productId : nftObj.productId,
+                        metadataURL : nftObj.url,
+                        price : nftObj.price,
+                        __v : nftObj.__v,
+
+                        name:res.name,
+                        description : res.description,
+                        imageURL : res.image,
+                        attributes : res.attributes
+                    })
+                })
+                .catch((err)=>{console.log(err)})
+            }
+
             setTimeout(()=>{
-                alert(JSON.stringify(myWritingsState));
-                setMyWritingDatas(myWritingsState);
-                }
-                ,1000);
-            // 테스트
+                setNFTData(resultNFTObjects); // 스테이트에 적용
+            },1000)
+            
+        })
+    }
+
+    
+    /**로그인 되어있는 사용자의 모든 글들을 가져와 store 에 저장합니다.*/
+    function plzGetUserWritings(){
+        
+        // 해당 유저의 모든 글을 가져옵니다.
+        ServerRequestManager.getUserWritings(userState.userId)
+        .then((res)=>{
+            dispatch(userStateActions.setMyWritings(res.data));
+            setTimeout(()=>{setMyWritingDatas(myWritingsState)},1000); //  1초 뒤에 업데이트
         })
         .catch((err)=>{
-            alert(`나의 글을 가져오는데 실패하였습니다.${err}`);
+            alert(err);
         })
+    }
+
+    function plzSetMyStorageType(type){
+        switch(type){
+            case "writings":{
+                setMyStorageType("writings");
+                console.log("writings");
+                break;
+            }
+            case "nfts":{
+                setMyStorageType("nfts");
+                console.log("nfts")
+                break;
+            }
+            default : {
+                setMyStorageType("writings");
+                console.log("writings");
+                break;
+            }
+        }
+    }
+
+    // 임시로 스토어의 NFT 데이터에서 productId 에 해당하는 NFT 의 정보를찾습니다.
+    function getNFTDataByDummyData(productId){
+        let resultNFTInfo = NFTData.filter((elem)=>{
+            console.log(elem);
+            if(elem.productId === productId){
+                return elem;
+            }
+        })
+        console.log(resultNFTInfo[0]);
+        return resultNFTInfo[0];
     }
 
     return(
@@ -117,16 +217,36 @@ const AccountPage = ()=>{
                 </div>
                 
             </ProfileBannerAreaPivot>
-            <AccountMenuMar></AccountMenuMar>
+            <AccountMenuMar plzSetMyStorageType={plzSetMyStorageType}></AccountMenuMar>
+            <StorageArea>
             {
-                myWritingDatas.length == 0?
-                <div style={{display:"flex",justifyContent:"center"}}>등록된 글이 없습니다</div>
+                myStorageType === "writings" ?
+                (
+                    myWritingDatas.length == 0?
+                    <div style={{display:"flex",justifyContent:"center"}}>등록된 글이 없습니다</div>
+                    :
+                    myWritingDatas.map((elem,idx)=>{
+                        return <WritingThumbnailCard topic={elem.title} key={elem.title+idx}/>
+                    })
+                )
                 :
-                myWritingDatas.map((elem,idx)=>{
-                    return <WritingThumbnailCard topic={elem.title}/>
-                })
+                (
+                    myNFTState.length == 0?
+                    <div style={{display:"flex",justifyContent:"center"}}>보유한 NFT 가 없습니다</div>
+                    :
+                    myNFTState.map((productId,idx)=>{
+                        console.log(`아이템을 찾습니다. ${productId}`);
+                        let nftInfo=getNFTDataByDummyData(productId);
+                        if(nftInfo)
+                        {
+                            return <NFTProductCard NFTInfo={nftInfo} key={"NFT"+nftInfo.name+idx} isProduct={false}></NFTProductCard>
+                        }else{
 
+                        }
+                    })
+                )
             }
+            </StorageArea>
             
         </div>
     )

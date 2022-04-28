@@ -1,10 +1,10 @@
 import React from "react";
 import styled from "styled-components";
 import { useState } from "react";
-import axios from 'axios';
 
 import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
+import ServerRequestManager from "../RequestServer/ServerRequestManager";
 
 
 const PageTitle = styled.span`
@@ -148,16 +148,15 @@ const WriteRequestCard = ()=>{
 
     const userState = useSelector(state=>state.userState); // 유저상태 가져오기
 
-
+    // 글 입력 관련 기능
     function textInput(e){
-        // e 는 자동적으로 넘어온다
         setText(e.target.value); // 저장
     }
     function topicInput(e){
         setTopic(e.target.value);
     }
 
-    // 글쓴 내용을 약간의 처리를 한다음 전송한다
+    // 글쓴 내용중 띄어쓰기를 '-' 로 바꾸어 변환한다음 서버에 전송하는 함수
     function textTransmit(){
         let changedText = '';
         let textCopy = [...text];
@@ -174,33 +173,22 @@ const WriteRequestCard = ()=>{
 
         changedText = changedText.reduce((a,c)=>a+c,'');
 
-        // let resultWriting = topic.concat('{',changedText,'}');
-
-
-        // 로그인 여부 확인 , 토큰여부
-        if(userState.authorizedToken !== '')
-        {   // 글 쓰기 등록
-            axios.post('http://127.0.0.1:4000/writing',
-                {title:topic, content:changedText, userId:userState.userId, nickname:userState.userNickname},
-                {headers:{authorization: "Bearer "+userState.authorizedToken}}
-            )
-            .then((res)=>{
-                // 보내기 성공시
-                if(res.data.status === "success"){
-                    alert('성공적으로 글을 등록하였습니다');
-
-                }
-                else{
-                    alert('보내기 실패',res.data.status, res.data.message);
-                }
-            }).catch((err)=>{
-                alert(err);
-            })        
-        }
-        else{
-            alert('로그인되지 않은 잘못된 요청입니다.(토큰없음)');
-        }
-        
+        // 서버에 글 추가
+        ServerRequestManager.addWriting(
+            userState.userId,
+            userState.authorizedToken,
+            userState.nickname,
+            topic,
+            changedText
+        )
+        .then((res)=>{
+            if(res.err){
+                alert(res.message, res.err);
+            }else{
+                if(res.success){ alert(res.message)} // 성공시
+                else{alert(res.message,res.err)}; // 실패시
+            }
+        })
 
         setText("");  // 내용 비우기
         setTopic(""); // 주제 비우기
