@@ -182,7 +182,7 @@ const LoginCard = ()=>{
                 //alert(`유저 '${res.data.userId}' 로그인 되었습니다. token : ${res.data.token}`);
                 // 현재 닉네임 값이 들어오지 않고 있다.
                 //dispatch(userStateActions.login(res.data.userId,res.data.nickname,res.data.token,0));
-                let authorizedToken = res.data.token;
+                let authorizedToken = res.data.jsonWebToken;
 
                 axios.get(`http://127.0.0.1:4000/account/${userId}`)
                 .then((res2)=>{
