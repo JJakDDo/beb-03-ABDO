@@ -60,7 +60,16 @@ const userStateActions ={
             type:"SET_CLEAR_MY_WRITINGS",
             newMyWritings:[]
         }
+    },
+
+    /** NFT 상품 목록을 등록 합니다*/
+    setNFTProducts : (nfts)=>{
+        return{
+            type:"SET_NFT_PRODUCTS",
+            newNFTProducts:nfts
+        }
     }
+    
 
 }
 

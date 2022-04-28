@@ -35,7 +35,8 @@ const InitState = {
     
         }
     ],
-    myWritings:[]
+    myWritings:[],
+    NFTProducts:[],
 }
 
 // 0.3 단계. 스테이트에 적용하기 위한 새로운 상태 객체를 뱉어내는 Reducer
@@ -63,6 +64,9 @@ const stateReducer = (state=InitState, action)=>{
         }
         case "SET_CLEAR_MY_WRITINGS":{
             return Object.assign({},state,{myWritings:action.newMyWritings}); // 빈 글들
+        }
+        case "SET_NFT_PRODUCTS":{
+            return Object.assign({},state,{NFTProducts:action.newNFTProducts}); // 새로운 NFT 상품 항목들로 등록
         }
         default: return state;        
     }

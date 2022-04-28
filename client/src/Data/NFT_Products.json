@@ -1,0 +1,26 @@
+[
+    {
+        "productId":1,
+        "name":"Book_Simple_Red",
+        "url":"https://bafybeihx46cyzikbgrb6yxbmwyevlapkoksgp35xh4y7izl5xgg56egxxy.ipfs.nftstorage.link/metadata.json",
+        "price":"3000"
+    },
+    {
+        "productId":2,
+        "name":"Book_Traditional_Black",
+        "url":"https://bafybeigsltclk7o5iskyvf5orhqsh54xa2twksmxhjymk3nqzv6ryfa3ri.ipfs.nftstorage.link/metadata.json",
+        "price":"5000"
+    },
+    {
+        "productId":3,
+        "name":"Book_Special_BlackGold",
+        "url":"https://bafybeihza6z7pvbds2u6wz6mtmmce7re746jru2f2gx55nm2mierh77gve.ipfs.nftstorage.link/metadata.json",
+        "price":"8000"
+    },
+    {
+        "productId":4,
+        "name":"Book_Special_WhiteGold",
+        "url":"https://bafybeid4ihocuofauv327ymzk4ifzrcdl35iodaqcnymkab4gxtwx6h72e.ipfs.nftstorage.link/metadata.json",
+        "price":"8000"
+    }
+]

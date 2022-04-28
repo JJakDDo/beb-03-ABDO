@@ -10,9 +10,11 @@ import StorePage from './Pages/StorePage';
 import AccountPage from './Pages/AccountPage';
 import LoginPage from './Pages/LoginPage';
 import SignupPage from './Pages/SignupPage';
-
+import ServerRequestManager from './RequestServer/ServerRequestManager';
 
 function App() {
+
+  ServerRequestManager.InitRegisterNFTProducts();
 
   return (
     <div className="App">
