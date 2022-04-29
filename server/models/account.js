@@ -12,7 +12,7 @@ const accountSchema = mongoose.Schema({
 	default: 0
   },
   nft: {
-	type: [Number],
+	type: [{productId: Number, name: String, url: String, price: Number}],
 	default: []
   }
 });

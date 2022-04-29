@@ -73,8 +73,11 @@
 
 ```
 {
-  "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiJyb2JpbjEiLCJuaWNrbmFtZSI6InJjIiwiaWF0IjoxNjUwNTE4NjUyfQ.am4JrhaKPJ_KyiA9EcdazNHnItJ-qgGFmt0ydDSjMck",
-    "userId": "USER'S ID"
+  "jsonWebToken": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiJyb2JpbjEiLCJuaWNrbmFtZSI6InJjIiwiaWF0IjoxNjUwNTE4NjUyfQ.am4JrhaKPJ_KyiA9EcdazNHnItJ-qgGFmt0ydDSjMck",
+  "userId": "USER'S ID",
+  "nickname": "USER'S NICKNAME",
+  "nft": "USER'S NFT ARRAY",
+  "token": "USER'S TOKEN"
 }
 ```
 
@@ -394,6 +397,13 @@ Content-Type: application/json
 
 ```
 [
-    1 // This represents NFT's productId
+  {
+    "productId": 2,
+    "name": "Book_Traditional_Black",
+    "url": "https://bafybeigsltclk7o5iskyvf5orhqsh54xa2twksmxhjymk3nqzv6ryfa3ri.ipfs.nftstorage.link/metadata.json",
+    "price": 5000,
+    "_id": "626a3e844e7cabf2431a3c86"
+  },
+  // other nft products
 ]
 ```

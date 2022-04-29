@@ -18,9 +18,12 @@ MongoClient.connect(MONGODB_URI, {useNewUrlParser: true}, async (err, client) =>
   const contractCollection = db.collection('contracts');
   const transactionCollection = db.collection('transactions');
   const accountCollection = db.collection('accounts');
+  const nftCollection = db.collection('nfts');
 
   const fungibleTokenContract = await contractCollection.findOne({type: 'FT'});
   const fungibleTokenContractAddress = fungibleTokenContract.contractAddress.toLowerCase();
+  const nonFungibleTokenContract = await contractCollection.findOne({type: 'NFT'});
+  const nonFungibleTokenContractAddress = nonFungibleTokenContract.contractAddress.toLowerCase();
 
   const latestBlock = await web3.eth.getBlockNumber();
 
@@ -32,18 +35,26 @@ MongoClient.connect(MONGODB_URI, {useNewUrlParser: true}, async (err, client) =>
   for(let i = checkedBlockNum; i <= latestBlock; i++) {
 	const block = await web3.eth.getBlock(i);
 
+	console.log(i);
 	for(let tx of block.transactions) {
 	  const receipt = await web3.eth.getTransactionReceipt(tx);
 
-	  if(receipt.to === fungibleTokenContractAddress || receipt.from === fungibleTokenContractAddress) {
+	  if(receipt.to === fungibleTokenContractAddress || receipt.from === fungibleTokenContractAddress || receipt.to === nonFungibleTokenContractAddress || receipt.from === nonFungibleTokenContractAddress) {
 		const foundTransaction = await transactionCollection.findOneAndDelete({txHash: tx});
 
 		if(!foundTransaction.value) continue;
 
 		console.log('Founded: ', foundTransaction.value);
 
-		if(receipt.status) {
-		  await accountCollection.findOneAndUpdate({userId: foundTransaction.value.userId}, {$inc: {token: foundTransaction.value.token}});
+		if(foundTransaction.value.method === 'mintToken') {
+		  if(receipt.status) {
+			await accountCollection.findOneAndUpdate({userId: foundTransaction.value.userId}, {$inc: {token: foundTransaction.value.token}});
+		  }
+		} else if(foundTransaction.value.method === 'mintNFT') {
+		  if(receipt.status) {
+			const foundNft = await nftCollection.findOne({productId: foundTransaction.value.productId});
+			await accountCollection.findOneAndUpdate({userId: foundTransaction.value.userId}, {$inc: {token: -foundTransaction.value.token}, '$push': {nft: {productId: foundNft.productId, name: foundNft.name, url: foundNft.url, price: foundNft.price}}});
+		  }
 		}
 	  }
 	}

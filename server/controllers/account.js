@@ -10,7 +10,7 @@ import jwt from 'jsonwebtoken';
 import dotenv from 'dotenv';
 
 // Import ABI from contract.js
-import {abi} from '../contract.js';
+import AbdoTokenAbi from '../contracts/AbdoTokenAbi.js';
 
 // Import web3 from web3.js
 import {web3} from '../web3.js';
@@ -20,20 +20,24 @@ dotenv.config();
 // Create Account
 export const createAccount = async (req, res) => {
   const body = req.body;
-  const account = web3.eth.accounts.create();
-  const newBody = {...body, address: account.address, privateKey: account.privateKey};
-  const newAccount = new Account(newBody);
 
   try {
+	const foundAccount = await Account.findOne({userId: body.userId});
+	if(foundAccount) throw new Error('User ID already exists');
+
+	const account = web3.eth.accounts.create();
+  	const newBody = {...body, address: account.address, privateKey: account.privateKey};
+  	const newAccount = new Account(newBody);
+
 	// DB에서 smart contract 정보와 admin 계정 정보를 가져온다.
 	const fungibleTokenContract = await Contract.findOne({type: 'FT'});
 	const adminAccount = await Account.findOne({userId: 'admin'});
 
 	// DB에서 가져온 데이터를 토대로 contract 객체 생성
-	const web3FTContract = new web3.eth.Contract(abi, fungibleTokenContract.contractAddress);
+	const web3FTContract = new web3.eth.Contract(AbdoTokenAbi, fungibleTokenContract.contractAddress);
 
 	// smart contract의 mintToken 함수 호출 부분
-	const dataTx = web3FTContract.methods.mintToken(account.address, 50).encodeABI();
+	const dataTx = web3FTContract.methods.mintToken(account.address, web3.utils.toWei('50')).encodeABI();
 	const rawTx = {
 	  to: fungibleTokenContract.contractAddress,
 	  from: adminAccount.address,

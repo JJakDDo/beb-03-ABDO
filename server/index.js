@@ -51,12 +51,12 @@ mongoose
     app.listen(PORT, async () => {
       console.log(`Server is running on port ${PORT}...`);
       await createServerAccount();
-      await getFaucet(10);
+      // await getFaucet(10);
       // ERC20 컨트랙트 배포
-      await deployContracts("FT", ftAbi, ftBytecode);
+      // await deployContracts("FT", ftAbi, ftBytecode);
       // ERC721 컨트랙트 배포
-      await deployContracts("NFT", nftAbi, nftBytecode);
-      setToken(nftAbi);
+      // await deployContracts("NFT", nftAbi, nftBytecode);
+      // setToken(nftAbi);
     })
   )
   .catch((err) => console.log(err.message));
