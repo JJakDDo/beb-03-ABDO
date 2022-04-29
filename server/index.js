@@ -14,11 +14,16 @@ import deployRoutes from "./routes/deploy.js";
 import { errorHandler } from "./middlewares/errorHandler.js";
 import { notFound } from "./middlewares/notFound.js";
 import { abi, bytecode } from "./contract.js";
+import nftAbi from "./contracts/AbdoNFTAbi.js";
+import ftAbi from "./contracts/AbdoTokenAbi.js";
+import { nftBytecode } from "./contracts/AbdoNFTBytecode.js";
+import { tokenBytecode as ftBytecode } from "./contracts/AbdoTokenBytecode.js";
 
 import {
   createServerAccount,
   deployContracts,
   getFaucet,
+  setToken,
 } from "./initSetting.js";
 
 dotenv.config();
@@ -41,17 +46,17 @@ const MONGODB_URI = process.env.MONGODB_URI || "mongodb://127.0.0.1:27017";
 const PORT = process.env.PORT || 4000;
 
 mongoose
-  .connect(MONGODB_URI+"SLS")
+  .connect(MONGODB_URI)
   .then(() =>
     app.listen(PORT, async () => {
       console.log(`Server is running on port ${PORT}...`);
       await createServerAccount();
       await getFaucet(10);
       // ERC20 컨트랙트 배포
-      await deployContracts("FT", abi, bytecode);
+      await deployContracts("FT", ftAbi, ftBytecode);
       // ERC721 컨트랙트 배포
-      //await deployContracts("NFT");
-      //setToken(nftAbi);
+      await deployContracts("NFT", nftAbi, nftBytecode);
+      setToken(nftAbi);
     })
   )
   .catch((err) => console.log(err.message));

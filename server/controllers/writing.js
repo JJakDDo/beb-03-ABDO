@@ -4,7 +4,7 @@ import Transaction from "../models/transaction.js";
 import Contract from "../models/contract.js";
 import mongoose from "mongoose";
 import { web3 } from "../web3.js";
-import { abi as FTabi } from "../contract.js";
+import FTabi from "../contracts/AbdoTokenAbi.js";
 import CustomError from "../errors/index.js";
 
 /*

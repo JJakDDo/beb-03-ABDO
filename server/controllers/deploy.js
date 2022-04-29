@@ -1,8 +1,12 @@
 import Account from "../models/account.js";
 import mongoose from "mongoose";
-import { deployContracts } from "../initSetting.js";
+import { deployContracts, setToken } from "../initSetting.js";
 import CustomError from "../errors/index.js";
 import { abi, bytecode } from "../contract.js";
+import nftAbi from "../contracts/AbdoNFTAbi.js";
+import ftAbi from "../contracts/AbdoTokenAbi.js";
+import { nftBytecode } from "../contracts/AbdoNFTBytecode.js";
+import { tokenBytecode as ftBytecode } from "../contracts/AbdoTokenBytecode.js";
 
 /*
   admin 계정만 컨트랙트를 배포
@@ -27,9 +31,10 @@ export const deploy = async (req, res, next) => {
 
   try {
     // ERC20 컨트랙트 배포
-    await deployContracts("FT", abi, bytecode);
+    await deployContracts("FT", ftAbi, ftBytecode);
     // ERC721 컨트랙트 배포
-    //await deployContracts("NFT");
+    await deployContracts("NFT", nftAbi, nftBytecode);
+    setToken(nftAbi);
 
     res.status(201).json({ status: "success" });
   } catch (err) {
