@@ -68,6 +68,8 @@ export const deployContracts = (type, abi, bytecode) => {
 
         const gasLimit = await web3.eth.estimateGas({
           data: bytecodeWithEncodedParameters,
+		  from: data.address,
+		  gasPrice: web3.utils.toHex(gasPrice)
         });
         //const gasLimit = "2000000";
 
