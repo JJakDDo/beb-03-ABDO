@@ -158,6 +158,9 @@ export const setToken = async (nftAbi) => {
     nftAbi,
     NFTcontract.contractAddress
   );
+  // pending 상태인 트랜잭션도 포함해서 transaction count를 가져온다.
+  const nonce = await web3.eth.getTransactionCount(admin.address, "pending");
+  const gasPrice = await web3.eth.getGasPrice();
   // 함수를 호출하기위해 bytecode를 가져온다.
   const bytecode = NFTContract.methods
     .setToken(FTcontract.contractAddress)
@@ -169,9 +172,6 @@ export const setToken = async (nftAbi) => {
       from: admin.address,
       gasPrice: web3.utils.toHex(gasPrice),
     });
-
-  // pending 상태인 트랜잭션도 포함해서 transaction count를 가져온다.
-  const nonce = await web3.eth.getTransactionCount(admin.address, "pending");
 
   const txObject = {
     nonce: web3.utils.toHex(nonce),
