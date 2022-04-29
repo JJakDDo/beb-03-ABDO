@@ -19,7 +19,7 @@ contract AbdoNFT is ERC721URIStorage, Ownable {
         string memory tokenURI,
         uint256 nftPrice
     ) public onlyOwner returns (uint256) {
-        require(token.balanceOf(recipient) > nftPrice);
+        require(token.balanceOf(recipient) >= nftPrice);
 
         token.transferFrom(recipient, msg.sender, nftPrice);
 
