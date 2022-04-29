@@ -24,16 +24,20 @@ const AccountLine = styled.div`
     filter: drop-shadow(0 0 2px rgb(222, 198, 196));
     user-select:none;
 `
-const AccountMenuBar = ()=>{
+const AccountMenuBar = ({plzSetMyStorageType})=>{
     
+    function setStorage(type){
+        console.log(`>>>전환 ${type}`);
+        plzSetMyStorageType(type);
+    }
 
     return(
         <div style={{display:"flex", flexDirection:"column", alignItems:"center",}}>
             <AccountMenuArea>
                 <div/>
                 <div/>
-                <AccountMenuBarIcon iconName="나의글"/>
-                <AccountMenuBarIcon iconName="NFT"/>
+                <AccountMenuBarIcon storage={"writings"} setStorage={setStorage} iconName="나의글"/>
+                <AccountMenuBarIcon storage={"nfts"} setStorage={setStorage} iconName="NFT"/>
                 <div/>
                 <div/>
             </AccountMenuArea>

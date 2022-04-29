@@ -35,7 +35,8 @@ const InitState = {
     
         }
     ],
-    myWritings:[]
+    myWritings:[],
+    NFTProducts:[],
 }
 
 // 0.3 단계. 스테이트에 적용하기 위한 새로운 상태 객체를 뱉어내는 Reducer
@@ -52,6 +53,11 @@ const stateReducer = (state=InitState, action)=>{
             return Object.assign({},state,{userState:action.userNewState}) // 기존의 상태에 모든 값을 지운 객체로 덮어씌우기
             break;
         }
+        case "UPDATE_USER_INFO":{
+            console.log("유저의 정보를 업데이트 합니다");
+            return Object.assign({},state,{userState:action.userNewState}) // 기존의 상태에다가, action 이 반환하는 상태로 덮어 씌우는것이다.
+            break;
+        }
         case "SET_ALL_WRITINGS":{
             //console.log(`글이 등록됩니다. 총 ${action.newWritings.length}`); //글 개수 확인
             return Object.assign({},state,{writings:action.newWritings}); // 글 부분만 새로 설정
@@ -63,6 +69,9 @@ const stateReducer = (state=InitState, action)=>{
         }
         case "SET_CLEAR_MY_WRITINGS":{
             return Object.assign({},state,{myWritings:action.newMyWritings}); // 빈 글들
+        }
+        case "SET_NFT_PRODUCTS":{
+            return Object.assign({},state,{NFTProducts:action.newNFTProducts}); // 새로운 NFT 상품 항목들로 등록
         }
         default: return state;        
     }

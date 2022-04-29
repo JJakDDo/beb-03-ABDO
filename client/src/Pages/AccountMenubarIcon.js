@@ -38,11 +38,13 @@ const IconNameDisplayer = styled.div`
 `
 
 
-const AccountMenuBarIcon = ({iconName})=>{
+const AccountMenuBarIcon = ({iconName,setStorage,storage})=>{
 
     return (
         <AccountMenuIconArea>
-            <IconNameDisplayer>{iconName}</IconNameDisplayer>
+            <IconNameDisplayer onClick={()=>{
+                setStorage(storage);
+            }}>{iconName}</IconNameDisplayer>
         </AccountMenuIconArea>
     )
 }

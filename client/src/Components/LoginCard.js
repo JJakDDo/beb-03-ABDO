@@ -1,11 +1,10 @@
 import React,{ useState } from "react";
 import { Link,useNavigate } from "react-router-dom";
 import styled from "styled-components";
-import axios from "axios";
-import sha256 from 'sha256';
 
 import userStateActions from "../store/userStateActions";
 import { useSelector, useDispatch } from "react-redux";
+import ServerRequestManager from "../RequestServer/ServerRequestManager";
 
 // 어떤 데이터를 입력하도록 할것인지 필드명을 알립니다.
 const DataFieldName = styled.div`
@@ -156,8 +155,10 @@ const LoginCard = ()=>{
         }
     }
 
-    // 유저 로그인 요청
+    // 유저 로그인
     function requestUserLogin(){
+
+        // 검증
         if(userId.length === 0){
             setErrMessage('아이디를 입력해주세요');return;
         }
@@ -170,35 +171,25 @@ const LoginCard = ()=>{
             setErrMessage('비밀번호 최소 8자 이상 입력해주세요');return;
         }
         else{
-            // 정상적인 값
+            // 검증 완료 . 모두 정상적인 값
             setErrMessage('');
-            //alert(JSON.stringify({userId,userPw}));
-
-            axios.post('http://127.0.0.1:4000/account/login',{
-                userId:userId,
-                password:sha256(userId+userPw+process.env.REACT_APP_CLIENTKEY)
-            })
+            
+            // 서버에 로그인 요청
+            ServerRequestManager.login(userId,userPw)
             .then((res)=>{
-                //alert(`유저 '${res.data.userId}' 로그인 되었습니다. token : ${res.data.token}`);
-                // 현재 닉네임 값이 들어오지 않고 있다.
-                //dispatch(userStateActions.login(res.data.userId,res.data.nickname,res.data.token,0));
-                let authorizedToken = res.data.token;
-
-                axios.get(`http://127.0.0.1:4000/account/${userId}`)
-                .then((res2)=>{
-                    dispatch(userStateActions.login(res2.data.userId,res2.data.nickname,authorizedToken,res2.data.token,res2.data.nft));
-                    navigate('/');
-                })
-                .catch((err)=>{
-                    alert(`해당 유저 정보를가져오지 못하였습니다. ${err}`);
-                })
-                //alert(`reduxStore :: userState:{userId:${userState.userId}, userToken:${userState.authorizedToken}}`);
-                
+                // 유저 정보 저장
+                dispatch(userStateActions.login(
+                    res.userId,
+                    res.userNickname,
+                    res.authorizedToken,
+                    res.INK,
+                    res.NFT
+                ));
+                navigate('/'); // 홈으로 이동
             })
             .catch((err)=>{
-                alert(`로그인 실패하였습니다.${err}`);
+                alert(`로그인 실패. 해당 유저의 정보를 가져오지 못했습니다.\n->${err}`);
             })
-            
         }
     }
 
